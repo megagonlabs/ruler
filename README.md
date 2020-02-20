@@ -31,12 +31,15 @@ By limiting the user's task to annotation and selection among suggested rules, *
 
 The user also gets interactive feedback on how their rules perform. 
 
-<img width="600" align="middle" src=media/ruler_demo_gif.gif>
+<img align="middle" src=media/ruler_demo_gif.gif>
 
 ### <a name='Experiments'></a>Experimental Results
 We evaluate our framework together with two alternative models for creating labeling functions: manual ([Snorkel](https://towardsdatascience.com/introducing-snorkel-27e4b0e6ecff)), and natural-language based ([Babble Labble](https://hazyresearch.github.io/snorkel/blog/babble_labble.html)). We aim to understand the trade-offs afforded by each method.
 
 We asked six participants to create labeling functions for two prevalent labeling tasks, spam detection and sentiment classification. For each task the participant was given 30 minutes and told to write as many functions as they considered necessary for the task.
+
+<img align="middle" src=media/QualitiativeRatings.png>
+<img align="middle" src=media/classifier-performance.png>
 
 
 
