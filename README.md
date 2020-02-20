@@ -38,7 +38,7 @@ We evaluate our framework together with two alternative models for creating labe
 
 We asked six participants to create labeling functions for two prevalent labeling tasks, spam detection and sentiment classification. For each task the participant was given 30 minutes and told to write as many functions as they considered necessary for the task.
 
-<img align="middle" src=media/QualitiativeRatings.png>
+<img align="middle" src=media/QualitativeRatings.png>
 <img align="middle" src=media/classifier-performance.png>
 
 
