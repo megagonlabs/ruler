@@ -11,9 +11,7 @@ This repo contains the source code for Ruler, a system that generates labeling f
 2. [Řuler](#Ruler)
    - [Experimental Results](#Experiments)
    - [Try it](#Webpage)
-3. [How to use the source code in this repo?](#Use)
-   - [Accessing the data](#Access)
-   - [Using Ruler](#Run)
+3. [How to use the source code in this repo](#Use)
 
 
 ## <a name='Introduction'></a>
@@ -45,5 +43,11 @@ We asked six participants to create labeling functions for two prevalent labelin
 <img align="middle" src=media/QualitativeRatings.png>
 <img align="middle" src=media/classifier-performance.png>
 
+
+### <a name='Use'></a>How to use the source code in this repo
+
+The server runs on [Flask](https://flask.palletsprojects.com/en/1.1.x/) and can be found in `server/`. Follow the instructions in `server/README.md` to download the data and the necessary libraries.
+
+The user interface is implemented in [React JavaScript Library](https://reactjs.org). The code and instructions can be found in `ui/`.
 
 
