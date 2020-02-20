@@ -1,0 +1,405 @@
+swagger: "2.0"
+info:
+  description: This is the swagger file that goes with MegaMiner IDEA2 server code.
+  version: "1.0.0"
+  title: IDEA2 API Specification
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: /api
+
+definitions:
+  Condition:
+    type: object
+    additionalProperties:
+      type: integer
+  Instance:
+    type: object
+    properties:
+      Connective:
+        type: integer
+      Direction:
+        type: boolean
+      Label:
+        type: integer
+      Weight:
+        type: integer
+      Conditions:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/Condition'
+  Tokens:
+    type: object
+    additionalProperties:
+      type: integer
+  Annotation:
+    type: object
+    properties:
+      end_offset:
+        type: integer
+      start_offset:
+        type: integer
+
+
+# Paths supported by the server application
+paths:
+
+  /label:
+    get:
+      operationId: idea2.get_labels
+      tags:
+        - GLL
+      summary: Get pre-defined labels
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+
+  /connective:
+    get:
+      operationId: idea2.get_connective
+      tags:
+        - GLL
+      summary: Get pre-defined connective definition
+      description: Get pre-defined connective definition for AND, OR among multiple conditions
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+
+  /keytype:
+    get:
+      operationId: idea2.get_keytype
+      tags:
+        - GLL
+      summary: Get pre-defined key types
+      description: Get pre-defined key types (e.g., a highlighed token is a token, concept or named entity.
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+
+  /concept:
+    get:
+      operationId: idea2.get_all_concepts
+      tags:
+        - Concept
+      summary: Get all existing concepts
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            additionalProperties:
+              type: array
+    post:
+      operationId: idea2.create_concept
+      tags:
+        - Concept
+      summary: Create a concept
+      parameters:
+        - name: concept
+          in: body
+          description: Concept to create
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The name of new concept
+              tokens:
+                $ref: '#/definitions/Tokens'
+                description: dictionary of tokens that belong to the new concept
+      responses:
+        200:
+          description: OK
+
+  /concept/{cname}:
+    get:
+      operationId: idea2.get_concept
+      tags:
+        - Concept
+      summary: Get the tokens from one concept
+      parameters:
+        - name: cname
+          in: path
+          description: Name of an exisiting concept
+          type: string
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Tokens'
+            description: Dictionary of tokens and their keytypes that belong to the requested concept
+    put:
+      operationId: idea2.update_tokens
+      tags:
+        - Concept
+      summary: Update tokens of existing concept
+      parameters:
+        - name: cname
+          description: Name of a concept
+          in: path
+          type: string
+          required: true
+        - name: tokens
+          in: body
+          description: A list of (new and existing) tokens belonging to this concept
+          required: true
+          schema:
+            $ref: '#/definitions/Tokens'
+      responses:
+        200:
+          description: OK
+    delete:
+      operationId: idea2.delete_concept
+      tags:
+       - Concept
+      summary: Delete an existing concept
+      parameters:
+        - name: cname
+          description: Name of an exisiting concept
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: OK
+
+  /interaction:
+    get:
+      operationId: idea2.next_text
+      tags:
+        - Interaction
+      summary: Get next text to label, possibly with annotations
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              text: 
+                type: string
+              annotations:
+                type: array
+                items:
+                  $ref: '#/definitions/Annotation'
+    post:
+      operationId: idea2.submit_interaction
+      tags:
+        - Interaction
+      summary: Submit the labeled text from the user
+      parameters:
+        - name: interaction
+          in: body
+          description: Original text, annotations, and label from the interaction
+          required: true
+          schema:
+            type: object
+            properties:
+              text_origin:
+                type: string
+                description: The original text
+                example: "pleas subscribe on me to my channel"
+              annotations:
+                type: array
+                items: 
+                  $ref: '#/definitions/Annotation'
+                description: The annotations over the text
+                example: 
+                  - id: 6
+                    label: 0
+                    start_offset: 6
+                    end_offset: 21
+              label:
+                type: integer
+                description: User selected label
+                example: 1
+      responses:
+        200:
+          description: A list of LF explanation generated from user interaction
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Instance'
+    put:
+      operationId: idea2.submit_instances
+      tags:
+        - Interaction
+      summary: Submit the user selected LF explanation
+      parameters:
+        - name: lf_dicts
+          in: body
+          description: A list of selected LF explanation
+          required: true
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/Instance'
+      responses:
+        200:
+          description: OK
+
+  /interaction/{idx}:
+    get:
+      operationId: idea2.get_interaction_idx
+      tags:
+        - Interaction
+      summary: Get the previous interaction from history
+      parameters:
+        - name: idx
+          in: path
+          description: The index of previous interaction
+          type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: The index of this interaction
+              text_origin:
+                type: string
+                description: The original text
+              text_labeled:
+                type: string
+                description: The labeled text
+              label:
+                type: integer
+                description: User selected labels
+              lf_exp:
+                type: array
+                items:
+                  $ref: '#/definitions/Instance'
+                description: The user selected LF explanations
+
+  /statistics:
+    get:
+      operationId: idea2.get_stats
+      tags:
+        - Statistics
+      summary: Get the current quality statistics
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              accuracy:
+                type: number
+                format: float
+                description: Accuracy
+              precision:
+                type: number
+                format: float
+                description: Precision
+              recall:
+                type: number
+                format: float
+                description: Recall
+              f1:
+                type: number
+                format: float
+                description: F1 score
+              count:
+                type: integer
+                description: Count of interaction rounds
+
+  /labelingfunctions:
+    get:
+      operationId: idea2.get_lf_stats
+      tags:
+        - LFStatistics
+      summary: Get the current LF statistics
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object  
+    put:
+      operationId: idea2.delete_lfs
+      tags:
+       - LFStatistics
+      summary: Delete a previous LF
+      parameters:
+        - name: lf_ids
+          in: body
+          description: IDs of LFs to be deleted
+          schema:
+            type: array
+            items:
+              type: string
+          required: true
+      responses:
+        204:
+          description: OK
+  /labelingfunctions/{lf_id}:
+    get:
+      operationId: idea2.get_lf_label_examples
+      tags:
+        - LFStatistics
+      summary: Get examples of text labeled by the given labeling function
+      parameters:
+        - name: lf_id
+          in: path
+          description: The ID of the labeling function 
+          type: string
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                text:
+                  type: string
+                  description: The text of the labeled example
+                label:
+                  type: integer
+                  description: The label assigned by this function
+                annotations:
+                  type: array
+                  items: 
+                    $ref: '#/definitions/Annotation'
+                  description: The annotations by this function over the text
+
+  /save:
+    post:
+      operationId: idea2.save_model
+      tags:
+        - Save
+      summary: Save the interactions, labeling functions, and model to disk.
+      parameters:
+        - name: data
+          in: body
+          description: info about how/where to save the model
+          required: true
+          schema:
+            type: object
+            properties:
+              dirname:
+                type: string
+                description: name of the directory to store model in
+      responses:
+        200:
+          description: OK    
+              
