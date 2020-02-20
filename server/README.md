@@ -12,6 +12,10 @@ cd IDEA2
 pip install -r requirements.txt
 ```
 
+### Download the data
+
+Download the files [here](https://www.kaggle.com/goneee/youtube-spam-classifiedcomments) and place them under `data/`.
+There should be five files.
 
 ## Run
 
@@ -24,8 +28,3 @@ python api/server.py
 
 Open your browser, and got to http://localhost:5000/
 
-There are 2 datasets in the repo that you can try--
- - Amazon Reviews: sentiment classification on 1 star and 5 star product reviews
- - Youtube comments: spam classification
-
-To change datasets, edit `python api/server.py` on line 28, and set `MODE = "Amazon"` or `MODE="Youtube"`
