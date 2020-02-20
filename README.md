@@ -1,10 +1,9 @@
 # Řuler
  Data Programming by Demonstration for Text 
  
+ <img align="middle" src=media/ruler_demo_gif.gif>
  
 This repo contains the source code for Ruler, a system that generates labeling functions from users' annotations of intelligently selected document examples (see our [KDD '20 submission]() for details). 
-
-<img align="middle" src=media/ruler_demo_gif.gif>
 
 
 1. [Background](#Introduction)
@@ -30,7 +29,7 @@ This method was pioneered by [Snorkel](https://towardsdatascience.com/introducin
 ## <a name='Ruler'></a>How Does Řuler Apply DPBD?
 We build on previous research on programming by demonstration and interactive learning to create a system where the user can annotate a few intelligently selected text examples, and the system will automatically suggest labeling functions to choose from. 
 
-By limiting the user's task to annotation and selection among suggested rules, **we allow fast exploration over the space of labeling functions.** <img src="https://giphy.com/embed/XreQmk7ETCak0" width="480" height="360" frameBorder="0" class="giphy-embed" allowFullScreen></img><p><a href="https://giphy.com/gifs/retro-thumbs-up-XreQmk7ETCak0">via GIPHY</a></p>
+By limiting the user's task to annotation and selection among suggested rules, **we allow fast exploration over the space of labeling functions.**
 
 <img  src=https://media.giphy.com/media/XreQmk7ETCak0/giphy.gif>
 
