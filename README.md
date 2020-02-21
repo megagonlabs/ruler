@@ -1,7 +1,10 @@
-# Řuler
- Data Programming by Demonstration for Text 
+# [ŘULER](http://18.223.190.82:3000/)
+ #### Data Programming by Demonstration for Text 
  
- <img align="middle" src=media/ruler_demo_gif.gif>
+ See our [demo video](https://drive.google.com/file/d/1Z3b8wyTKoUX4b5jC8CJM9-DWuF87MwLE/view?usp=sharing) or [try it yourself](http://18.223.190.82:3000/).
+ 
+ <img src=media/ruler_demo_gif.gif>
+ 
  
 This repo contains the source code for Ruler, a system that generates labeling functions from users' annotations of intelligently selected document examples (see our [KDD '20 submission]() for details). 
 
@@ -21,40 +24,56 @@ That's where data programming comes in: a domain expert writes functions (that m
 
 This method was pioneered by [Snorkel](https://towardsdatascience.com/introducing-snorkel-27e4b0e6ecff), which aggregates and de-noises sets of labeling functions. However, little is known about user experience in writing labeling functions or how to improve it.
 
+Inspired by work in programming by demonstration and in interactive learning, *__Data Programming by Demonstration__* means that instead of writing labeling functions, the user can label a few examples to demonstrate what those functions should do.
+
 ## <a name='Ruler'></a>How Does Řuler Apply DPBD?
-We build on previous research on programming by demonstration and interactive learning to create a system where the user can annotate a few intelligently selected text examples, and the system will automatically suggest labeling functions to choose from. 
+Given a few intelligently selected text samples, the user can annotate some spans or relationships, and the system will automatically suggest labeling functions to choose from. The user also gets interactive feedback about how their labels are performing.
 
-### By limiting the user's task to annotation and selection among suggested rules, **we allow fast exploration over the space of labeling functions.**
+<h3 align="center">
+By limiting the user's task to annotation and selection among suggested rules, <br/>
+we allow fast exploration over the space of labeling functions.
+ <br/>
+<img width=800px src=media/fast-exploration.gif>
+</h3>
 
-<img  src=https://media.giphy.com/media/XreQmk7ETCak0/giphy.gif>
 
+## <a name='Experiments'></a>Experimental Results 
+#### Comparing Ruler to other Methods of Generating Labeling Functions
 
-The user also gets interactive feedback on how their rules perform. 
+We wanted to understand the trade-offs of different models for creating labeling functions, so we conducted a user study.  Ruler was compared to manual ([Snorkel](https://towardsdatascience.com/introducing-snorkel-27e4b0e6ecff)), and natural-language based ([Babble Labble](https://hazyresearch.github.io/snorkel/blog/babble_labble.html)) creation of functions. 
 
+We asked six participants to create labeling functions for two prevalent labeling tasks, spam detection and sentiment classification. For each task the participant was given 30 minutes and told to write as many functions as they considered necessary for the task.  In the exit surveys we inquired participants opinions about ease of use, expressivity, and ease of learning along with overall satisfaction with the tool.  
 
-## <a name='Experiments'></a>Experimental Results: Comparing Ruler to other Methods of Generating Labeling Functions
-We evaluate our framework together with two alternative models for creating labeling functions: manual ([Snorkel](https://towardsdatascience.com/introducing-snorkel-27e4b0e6ecff)), and natural-language based ([Babble Labble](https://hazyresearch.github.io/snorkel/blog/babble_labble.html)). We aim to understand the trade-offs afforded by each method.
-
-We asked six participants to create labeling functions for two prevalent labeling tasks, spam detection and sentiment classification. For each task the participant was given 30 minutes and told to write as many functions as they considered necessary for the task.
-
-In the exit surveys we inquired participants opinions about ease of use, expressivity, and ease of learning along with overall satisfaction with the tool.  While we have limited data, with two participants in each condition, participants rated Ruler highest in all subjective questions except expressivity by a small margin. Ruler is found to be almost as expressive as Snorkel (-0.08) and significantly more expressive than BabbleLabble (+2.58).
+Although we have limited data, participants rated Ruler highest in all subjective questions except expressivity by a small margin. Ruler is found to be almost as expressive as Snorkel (-0.08) and significantly more expressive than BabbleLabble (+2.58).
 
 <img align="middle" src=media/QualitativeRatings.png>
 
-Overall, participants found Ruler easy to use and ‘cognitively very simple’ (P6). Features such as ‘immediate visual feedback on how much a new rule increased/decreased the metrics’ (P6) leading to shorter iterations ‘encouraged \[participants] not to be hesitant about trying out stuff’(P5) and ‘create more labeling functions (and not be picky) and monitor how labeling functions interact and learn from those’ (P5). 
+Overall, participants found Ruler easy to use and ‘cognitively very simple’. Features such as ‘immediate visual feedback on how much a new rule increased/decreased the metrics’ leading to shorter iterations ‘encouraged \[participants] not to be hesitant about trying out stuff’ and to ‘create more labeling functions (and not be picky) and monitor how labeling functions interact and learn from those’. 
 
-### Preliminary results suggest that the ease and speed afforded by Ruler does not incur a cost on the end model performance.
+### Importantly, the ease and speed afforded by Ruler does not incur a cost on the end model performance. 
 
-<img align="middle" src=media/classifier-performance.png>
+<img src=media/classifier-performance.png>
 
 While we were expecting Ruler to lead in terms of ease of use and learning, equalling expressivity of a rich programming language with many constructs while being perceived as much richer than natural language came as a bit of surprise. 
+Initial results suggest that providing a simpler grammar with few constructs could achieve good results for most tasks. 
 
-Initial results suggest that providing a simpler grammar with few constructs could achieve good results when considered in aggregates where learning of respective weights is left up to machine learning. As such, **users can focus on choosing the right generalization of observed instances, rather than on the implementation details** in a programming language, or on how to express it in natural language with potentially invisible rules of interpretation. 
+**This allows users to focus on**
+
+  :white_check_mark: choosing the right generalization of observed instances
+
+  :white_check_mark: capturing the tail end of their data distribution
+
+**and avoid worrying about**
+
+  :x: implementation details** in a programming language
+
+  :x: how to express rules in natural language
+
+  :x: how to formalize their intuition
+
 
 ## <a name='Use'></a>How to use the source code in this repo
 
 The server runs on [Flask](https://flask.palletsprojects.com/en/1.1.x/) and can be found in `server/`. Follow the instructions in `server/README.md` to download the data and the necessary libraries.
 
 The user interface is implemented in [React JavaScript Library](https://reactjs.org). The code and instructions can be found in `ui/`.
-
-
