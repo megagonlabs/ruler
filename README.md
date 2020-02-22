@@ -78,4 +78,4 @@ The server runs on [Flask](https://flask.palletsprojects.com/en/1.1.x/) and can 
 
 The user interface is implemented in [React JavaScript Library](https://reactjs.org). The code and instructions can be found in [`ui/`](ui/).
 
-Once you have both of these running, navigate to [localhost:3000](localhost:3000).
+Once you have both of these running, navigate to `localhost:3000`.
