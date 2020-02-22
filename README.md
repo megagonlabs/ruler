@@ -74,6 +74,6 @@ Initial results suggest that providing a simpler grammar with few constructs cou
 
 ## <a name='Use'></a>How to use the source code in this repo
 
-The server runs on [Flask](https://flask.palletsprojects.com/en/1.1.x/) and can be found in `server/`. Follow the instructions in `server/README.md` to download the data and the necessary libraries.
+The server runs on [Flask](https://flask.palletsprojects.com/en/1.1.x/) and can be found in [`server/`](server/). Follow the instructions in `server/README.md` to download the data and the necessary libraries.
 
-The user interface is implemented in [React JavaScript Library](https://reactjs.org). The code and instructions can be found in `ui/`.
+The user interface is implemented in [React JavaScript Library](https://reactjs.org). The code and instructions can be found in [`ui/`](ui/).
