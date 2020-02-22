@@ -7,8 +7,7 @@ Interactive Data Exploration for Automated Annotation
 ### Download the repo and create runtime environment
 
 ```
-git clone https://github.com/rit-git/IDEA2.git .
-cd IDEA2
+cd server
 pip install -r requirements.txt
 ```
 
