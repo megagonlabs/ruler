@@ -21,10 +21,13 @@ There should be five files.
 
 
 
-### Start
 ```
 python api/server.py
 ```
 
-Open your browser, and got to http://localhost:5000/
+Open your browser, and got to http://localhost:5000/api/ui
+
+This will display a [Swagger UI](https://swagger.io/tools/swagger-ui/) page that allows you to interact directly with the API.
+
+
 
