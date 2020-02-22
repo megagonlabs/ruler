@@ -65,7 +65,7 @@ Initial results suggest that providing a simpler grammar with few constructs cou
 
 **and avoid worrying about**
 
-  :x: implementation details** in a programming language
+  :x: implementation details in a programming language
 
   :x: how to express rules in natural language
 
