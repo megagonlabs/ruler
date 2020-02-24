@@ -6,14 +6,17 @@
  <img src=media/ruler_demo_gif.gif>
  
  
-This repo contains the source code for Ruler, a system that generates labeling functions from users' annotations of intelligently selected document examples (see our [KDD '20 submission](Ruler-KDD2020-Submission.pdf) for details). 
+This repo contains the source code for Ruler, a system that generates labeling functions from users' annotations of intelligently selected document examples. 
 
 
 1. [What is Data Programming by Demonstration? (DPBD)](#DPBD)
 2. [Řuler: DPBD for Text](#Ruler)
 3. [Experimental Results: Comparing Ruler to other Methods of Generating Labeling Functions](#Experiments)
 4. [How to use the source code in this repo](#Use)
-
+   - [Engine](#Engine)
+       - [Downloading the Data](#Data)
+       - [Starting the Server](#Server)
+   - [User Interface](#UI)
 
 
 ## <a name='DPBD'></a>What is Data Programming by Demonstration (DPBD)?
@@ -72,12 +75,88 @@ Initial results suggest that providing a simpler grammar with few constructs cou
   :x: how to formalize their intuition
 
 
-## <a name='Use'></a>How to use the source code in this repo
+# <a name='Use'></a>How to use the source code in this repo
 
-The server runs on [Flask](https://flask.palletsprojects.com/en/1.1.x/) and can be found in [`server/`](server/). Follow the instructions in `server/README.md` to download the data and the necessary libraries.
+Follow these instructions to run the system on your own, where you can plug in your own data and save the resulting labels, models, and annotations.
 
-The user interface is implemented in [React JavaScript Library](https://reactjs.org). The code and instructions can be found in [`ui/`](ui/).
+## <a name='Engine'></a>Engine
+
+The server runs on [Flask](https://flask.palletsprojects.com/en/1.1.x/) and can be found in [`server/`](server/). 
+
+### 1. Install Dependencies :wrench:
+
+```shell
+cd server
+pip install -r requirements.txt
+```
+
+### 2. Upload Data :memo:
+
+To run the Youtube Spam Classification task shown in the demo, download the data files [here](https://www.kaggle.com/goneee/youtube-spam-classifiedcomments) and place them under `data/`.
+There should be five files.
+
+ __Want to use Another Dataset?__ 
+
+ Open `server/api/idea2.py`. 
+ You'll want to replace `load_youtube_dataset` with your own function. 
+ The return value of this function should be 4 [pandas DataFrames](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html) (training, development, validation, and test sets).  
+ 
+ Your dataframes must have:
+  - A `label` column: an integer value describing which class the example belongs to. (The training dataframe doesn't need this column).
+  - A `text` column: the text to be annotated.
+  - A unique [index](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Index.html?highlight=index#pandas.Index). You can use the `[reset_index](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.reset_index.html)` function to do this.
+ 
+For an example, see `server/data/preparer.py`.
+
+In `server/api/idea2.py`, you should also change the variables `MODE` and `USER` to something descriptive. This will dictate the directory where your models are saved, should you choose to save them.
+
+### 3. Run :runner:
+
+```
+python api/server.py
+```
+
+Open your browser, and got to http://localhost:5000/api/ui
+
+This will display a [Swagger UI](https://swagger.io/tools/swagger-ui/) page that allows you to interact directly with the API.
+
+### 4. Save Your Model (Optional) :floppy_disk:
+
+Via Ruler UI: 
+
+Click the save button in the top right corner.
+
+
+Via the API :
+
+Submit a post request to `http://localhost:5000/save`. 
+
+
+The snorkel model, concepts, labelling function history, and interaction history will all be in the directory `<USER>/<MODE>`.
+By default this is `guest/Youtube`.
+
+
+## <a name='UI'></a>User Interface
+
+
+The user interface is implemented in [React JavaScript Library](https://reactjs.org). The code can be found in [`ui/`](ui/).
+
+### 1. Install Node.js
+
+[You can download node.js here.](https://nodejs.org/en/)
+
+To confirm that you have node.js installed, run `node - v`
+
+### 2. Run
+
+```shell
+cd ui
+npm install 
+npm start
+```
+
+By default, the app will make calls to `localhost:5000`, assuming that you have the server running on your machine. (See the [instructions above](#Engine).
 
 Once you have both of these running, navigate to `localhost:3000`.
 
-For more information on how to use the tool, see our [demo video](https://drive.google.com/file/d/1Z3b8wyTKoUX4b5jC8CJM9-DWuF87MwLE/view?usp=sharing).
+#### For more information on how to use the tool, see our [demo video](https://drive.google.com/file/d/1Z3b8wyTKoUX4b5jC8CJM9-DWuF87MwLE/view?usp=sharing).
