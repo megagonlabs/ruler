@@ -6,7 +6,7 @@
  <img src=media/ruler_demo_gif.gif>
  
  
-This repo contains the source code for Ruler, a system that generates labeling functions from users' annotations of intelligently selected document examples. 
+This repo contains the source code for Ruler, a system that generates labeling functions from users' annotations of intelligently selected document examples (see our [KDD '20 submission](Ruler-KDD2020-Submission.pdf) for details). 
 
 
 1. [What is Data Programming by Demonstration? (DPBD)](#DPBD)
