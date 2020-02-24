@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import Badge from '@material-ui/core/Badge';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import MegagonIcon from './MegagonIcon';
+import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
@@ -173,7 +173,7 @@ const NavigationBar = (props)=> {
               className={clsx(classes.menuButton, open && classes.hide)}
               aria-label="Open drawer"
           >
-            <MegagonIcon/>
+            <MenuIcon/>
           </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
  		 Řuler: Data Programming by Demonstration for Text 
