@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import MegagonIcon from './MegagonIcon';
 import GithubIcon from './GithubIcon';
 import Toolbar from '@material-ui/core/Toolbar';
 import clsx from 'clsx';
@@ -55,14 +54,8 @@ function Footer(props) {
 
     return (
         <Toolbar className={clsx(classes.root, classes.footer, { [classes.footerShift]: isDrawerOpen })} color={'primary'}>
-            <IconButton edge="start" className={classes.menuButton} onClick={handleClick.bind(null,'https://megagon.ai')} >
-                <MegagonIcon/>
-            </IconButton>
             <IconButton className={classes.menuButton} >
                 <FavoriteIcon className={classes.icon}/>
-            </IconButton>
-            <IconButton edge="end" className={classes.menuButton} onClick={handleClick.bind(null,'https://github.com/rit-git/dpbd')} >
-                <GithubIcon/>
             </IconButton>
         </Toolbar>
     );
