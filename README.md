@@ -14,18 +14,14 @@ This repo contains the source code for Ruler, a system that generates labeling f
 3. [Experimental Results: Comparing Ruler to other Methods of Generating Labeling Functions](#Experiments)
 4. [How to use the source code in this repo](#Use)
    - [Engine](#Engine)
-       - [Downloading the Data](#Data)
-       - [Starting the Server](#Server)
    - [User Interface](#UI)
 
 
 ## <a name='DPBD'></a>What is Data Programming by Demonstration (DPBD)?
-The success of machine learning has dramatically increased the demand for high-quality labeled data, as the models used in practice are predominantly supervised and performance depends largely on the quality of the training data.
-However, this data is expensive to obtain, and limits the adoption of these technologies outside of resource-rich domains.
+
+The success of machine learning has dramatically increased the demand for high-quality labeled data-- but this data is expensive to obtain, which limits the adoption of these technologies outside of resource-rich domains.
 
 That's where data programming comes in: a domain expert writes functions (that might be noisy or conflicting), and they are combined and denoised. These denoised functions can then be applied to a large unlabeled dataset in a weak-supervision approach.
-
-This method was pioneered by [Snorkel](https://towardsdatascience.com/introducing-snorkel-27e4b0e6ecff), which aggregates and de-noises sets of labeling functions. However, little is known about user experience in writing labeling functions or how to improve it.
 
 Inspired by work in programming by demonstration and in interactive learning, *__Data Programming by Demonstration__* means that instead of writing labeling functions, the user can label a few examples to demonstrate what those functions should do.
 
