@@ -38,21 +38,21 @@ we allow fast exploration over the space of labeling functions.
 ## <a name='Experiments'></a>Experimental Results 
 #### Comparing Ruler to other Methods of Generating Labeling Functions
 
-We wanted to understand the trade-offs of different models for creating labeling functions, so we conducted a user study.  Ruler was compared to manual ([Snorkel](https://towardsdatascience.com/introducing-snorkel-27e4b0e6ecff)), and natural-language based ([BabbleLabble](https://hazyresearch.github.io/snorkel/blog/babble_labble.html)) creation of functions. 
+We wanted to understand the trade-offs of different models for creating labeling functions, so we conducted a user study.  Řuler was compared to manual ([Snorkel](https://towardsdatascience.com/introducing-snorkel-27e4b0e6ecff)), and natural-language based ([BabbleLabble](https://hazyresearch.github.io/snorkel/blog/babble_labble.html)) creation of functions. 
 
 We asked six participants to create labeling functions for two prevalent labeling tasks, spam detection and sentiment classification. For each task the participant was given 30 minutes and told to write as many functions as they considered necessary for the task.  In the exit surveys we inquired participants opinions about ease of use, expressivity, and ease of learning along with overall satisfaction with the tool.  
 
-Although we have limited data, participants rated Ruler highest in all subjective questions except expressivity by a small margin. Ruler is found to be almost as expressive as Snorkel (-0.08) and significantly more expressive than BabbleLabble (+2.58).
+Although we have limited data, participants rated Řuler highest in all subjective questions except expressivity by a small margin. Řuler is found to be almost as expressive as Snorkel (-0.08) and significantly more expressive than BabbleLabble (+2.58).
 
 <img align="middle" src=media/QualitativeRatings.png>
 
-Overall, participants found Ruler easy to use and "cognitively very simple." Features such as "immediate visual feedback on how much a new rule increased/decreased the metrics" leading to shorter iterations "encouraged \[participants] not to be hesitant about trying out stuff" and to "create more labeling functions (and not be picky) and monitor how labeling functions interact and learn from those."
+Overall, participants found Řuler easy to use and "cognitively very simple." Features such as "immediate visual feedback on how much a new rule increased/decreased the metrics" leading to shorter iterations "encouraged \[participants] not to be hesitant about trying out stuff" and to "create more labeling functions (and not be picky) and monitor how labeling functions interact and learn from those."
 
-### Importantly, the ease and speed afforded by Ruler does not incur a cost on the end model performance. 
+### Importantly, the ease and speed afforded by Řuler does not incur a cost on the end model performance. 
 
 <img src=media/classifier-performance.png>
 
-While we were expecting Ruler to lead in terms of ease of use and learning, equalling expressivity of a rich programming language with many constructs while being perceived as much richer than natural language came as a bit of surprise. 
+While we were expecting Řuler to lead in terms of ease of use and learning, equalling expressivity of a rich programming language with many constructs while being perceived as much richer than natural language came as a bit of surprise. 
 Initial results suggest that providing a simpler grammar with few constructs could achieve good results for most tasks. 
 
 **This allows users to focus on**
