@@ -50,7 +50,7 @@ Overall, participants found Řuler easy to use and "cognitively very simple." Fe
 
 ### Importantly, the ease and speed afforded by Řuler does not incur a cost on the end model performance. 
 
-<img src=media/classifier-performance.png>
+<img src=media/classifier-perfm.png>
 
 While we were expecting Řuler to lead in terms of ease of use and learning, equalling expressivity of a rich programming language with many constructs while being perceived as much richer than natural language came as a bit of surprise. 
 Initial results suggest that providing a simpler grammar with few constructs could achieve good results for most tasks. 
@@ -150,7 +150,7 @@ npm install
 npm start
 ```
 
-By default, the app will make calls to `localhost:5000`, assuming that you have the server running on your machine. (See the [instructions above](#Engine).
+By default, the app will make calls to `localhost:5000`, assuming that you have the server running on your machine. (See the [instructions above](#Engine)).
 
 Once you have both of these running, navigate to `localhost:3000`.
 
