@@ -38,7 +38,7 @@ we allow fast exploration over the space of labeling functions.
 ## <a name='Experiments'></a>Experimental Results 
 #### Comparing Ruler to other Methods of Generating Labeling Functions
 
-We wanted to understand the trade-offs of different models for creating labeling functions, so we conducted a user study.  Ruler was compared to manual ([Snorkel](https://towardsdatascience.com/introducing-snorkel-27e4b0e6ecff)), and natural-language based ([Babble Labble](https://hazyresearch.github.io/snorkel/blog/babble_labble.html)) creation of functions. 
+We wanted to understand the trade-offs of different models for creating labeling functions, so we conducted a user study.  Ruler was compared to manual ([Snorkel](https://towardsdatascience.com/introducing-snorkel-27e4b0e6ecff)), and natural-language based ([BabbleLabble](https://hazyresearch.github.io/snorkel/blog/babble_labble.html)) creation of functions. 
 
 We asked six participants to create labeling functions for two prevalent labeling tasks, spam detection and sentiment classification. For each task the participant was given 30 minutes and told to write as many functions as they considered necessary for the task.  In the exit surveys we inquired participants opinions about ease of use, expressivity, and ease of learning along with overall satisfaction with the tool.  
 
@@ -46,7 +46,7 @@ Although we have limited data, participants rated Ruler highest in all subjectiv
 
 <img align="middle" src=media/QualitativeRatings.png>
 
-Overall, participants found Ruler easy to use and ‘cognitively very simple’. Features such as ‘immediate visual feedback on how much a new rule increased/decreased the metrics’ leading to shorter iterations ‘encouraged \[participants] not to be hesitant about trying out stuff’ and to ‘create more labeling functions (and not be picky) and monitor how labeling functions interact and learn from those’. 
+Overall, participants found Ruler easy to use and "cognitively very simple." Features such as "immediate visual feedback on how much a new rule increased/decreased the metrics" leading to shorter iterations "encouraged \[participants] not to be hesitant about trying out stuff" and to "create more labeling functions (and not be picky) and monitor how labeling functions interact and learn from those."
 
 ### Importantly, the ease and speed afforded by Ruler does not incur a cost on the end model performance. 
 
