@@ -5,7 +5,7 @@
  <img src=media/ruler_demo_gif.gif>
  
  
-This repo contains the source code for Ruler, a system that generates labeling functions from users' annotations of intelligently selected document examples (see our [KDD '20 submission](Ruler-KDD2020-Submission.pdf) for details). 
+This repo contains the source code for Ruler, a system that generates labeling functions from users' annotations of intelligently selected document examples (see our [KDD'20 submission](Ruler-KDD2020-Submission.pdf) for details). 
 
 
 1. [What is Data Programming by Demonstration? (DPBD)](#DPBD)
@@ -50,7 +50,7 @@ Overall, participants found Řuler easy to use and "cognitively very simple." Fe
 
 ### Importantly, the ease and speed afforded by Řuler does not incur a cost on the end model performance. 
 
-<img style="width:1400px" src="media/classifier-perfm.png">
+<img src=media/classifier-perfm.png>
 
 While we were expecting Řuler to lead in terms of ease of use and learning, equalling expressivity of a rich programming language with many constructs while being perceived as much richer than natural language came as a bit of surprise. 
 Initial results suggest that providing a simpler grammar with few constructs could achieve good results for most tasks. 
