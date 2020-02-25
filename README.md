@@ -1,4 +1,4 @@
-# [ŘULER](http://18.223.190.82:3000/): Data Programming by Demonstration for Text 
+# ŘULER: Data Programming by Demonstration for Text 
  
  See our [demo video](https://drive.google.com/file/d/1Z3b8wyTKoUX4b5jC8CJM9-DWuF87MwLE/view?usp=sharing) or [try it yourself](http://18.223.190.82:3000/).
  
