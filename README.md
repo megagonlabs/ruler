@@ -44,13 +44,13 @@ We asked six participants to create labeling functions for two prevalent labelin
 
 Although we have limited data, participants rated Řuler highest in all subjective questions except expressivity by a small margin. Řuler is found to be almost as expressive as Snorkel (-0.08) and significantly more expressive than BabbleLabble (+2.58).
 
-<img align="middle" width=1000px src=media/qualitative-ratings.svg>
+<img align="middle" width=900px src=media/qualitative-ratings.svg>
 
 Overall, participants found Řuler easy to use and "cognitively very simple." Features such as "immediate visual feedback on how much a new rule increased/decreased the metrics" leading to shorter iterations "encouraged \[participants] not to be hesitant about trying out stuff" and to "create more labeling functions (and not be picky) and monitor how labeling functions interact and learn from those."
 
 ### Importantly, the ease and speed afforded by Řuler does not incur a cost on the end model performance. 
 
-<img width=1000px src=media/classifier-perfm.png>
+<img width=900px src=media/classifier-perfm.png>
 
 While we were expecting Řuler to lead in terms of ease of use and learning, equalling expressivity of a rich programming language with many constructs while being perceived as much richer than natural language came as a bit of surprise. 
 Initial results suggest that providing a simpler grammar with few constructs could achieve good results for most tasks. 
