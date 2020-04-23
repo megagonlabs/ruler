@@ -22,7 +22,7 @@ The success of machine learning has dramatically increased the demand for high-q
 
 That's where data programming comes in: a domain expert writes functions (that might be noisy or conflicting), and they are combined and denoised. These denoised functions can then be applied to a large unlabeled dataset in a weak-supervision approach.
 
-Inspired by work in programming by demonstration and in interactive learning, *__Data Programming by Demonstration__* means that instead of writing labeling functions, the user can label a few examples to demonstrate what those functions should do.
+Inspired by work in programming by demonstration and in interactive learning, *__Data Programming by Demonstration__* enables users to label a few examples to demonstrate what labeling functions should do, instead of manually writing these functions. 
 
 ## <a name='Ruler'></a>How Does Řuler Apply DPBD?
 Given a few intelligently selected text samples, the user can annotate some spans or relationships, and the system will automatically suggest labeling functions to choose from. The user also gets interactive feedback about how their labels are performing.
