@@ -30,12 +30,12 @@ have programming literacy. Crucially, it is often difficult to convert domain kn
 through enumeration even for those who are proficient programmers. The accessibility of writing labeling functions is a 
 challenge in a wider use of data programming.
 
-<h4 align="center">
+<h3 align="center">
 <img  align="center" width="900" src="media/overview.png" />
-Overview of the data programming by demonstration framework. Straight lines indicate the flow of domain
+Overview of the data programming by demonstration (DPBD) framework. Straight lines indicate the flow of domain
 knowledge, and dashed lines indicate the flow of data.
 <br/>
-</h4>
+</h3>
 
 To address this challenge and make creating labeling functions easier, we introduce a new framework, __Data Programming by 
 Demonstration (DPBD)__, to synthesize labeling functions through user interactions. DPBD aims to move the burden of 
