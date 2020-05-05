@@ -18,17 +18,29 @@ This repo contains the source code for Ruler, a system that generates labeling f
 
 ## <a name='DPBD'></a>What is Data Programming by Demonstration (DPBD)?
 
-The success of machine learning has dramatically increased the demand for high-quality labeled data-- but this data is expensive to obtain, which limits the adoption of these technologies outside of resource-rich domains.
+The success of machine learning has dramatically increased the demand for high-quality labeled data---but this data is expensive to obtain, which inhibits broader utilization of machine learning models outside resource rich settings.
 
-That's where data programming comes in: a domain expert writes functions (that might be noisy or conflicting), and they are combined and denoised. These denoised functions can then be applied to a large unlabeled dataset in a weak-supervision approach.
+That's where data programming [[1](https://arxiv.org/pdf/1605.07723.pdf), [2](https://arxiv.org/pdf/1711.10160.pdf)] comes in. Data programming aims to address the difficulty of collecting labeled data using a 
+programmatic approach to weak supervision by heuristics, where domain experts are expected to provide functions
+incorporating their domain knowledge to label subsets of a large training dataset. Since these labeling functions
+may overlap or conflict with each other, they are denoised (i.e., the optimum corresponding weights are learned)
+using inference over a generative graphical model. The denoised functions are then applied to the large unlabeled 
+dataset to obtain probabilistic labels and train standard machine learning models in a noise-aware manner. Writing data programs or labeling functions can be, however, challenging. Most domain experts or lay users do not 
+have programming literacy. Crucially, it is often difficult to convert domain knowledge to a set of rules 
+through enumeration even for those who are proficient programmers. The accessibility of writing labeling functions is a 
+challenge in a wider use of data programming.
 
-Inspired by work in programming by demonstration and in interactive learning, *__Data Programming by Demonstration__* enables users to label a few examples to demonstrate what labeling functions should do, instead of manually writing these functions. 
+To address this challenge, we introduce *__Data Programming by Demonstration__*, enabling users to label a few examples to demonstrate what labeling functions should do, instead of manually writing these functions. 
 
 ## <a name='Ruler'></a>How Does Řuler Apply DPBD?
-Given a few intelligently selected text samples, the user can annotate some spans or relationships, and the system will automatically suggest labeling functions to choose from. The user also gets interactive feedback about how their labels are performing.
+Řuler is an interactive tool that operationalizes data programming by demonstration for textural data. To that end, it 
+enables users to effectively sample (navigate) examples using active learning and label these examples while expressing  
+their labeling rationales by interactively annotating spans and relations. Řuler then  automatically suggests labeling 
+functions to choose and refine from. Users also get interactive visual feedback about how their labeling functions 
+are performing.
 
 <h3 align="center">
-By limiting the user's task to annotation and selection among suggested rules, <br/>
+By limiting users' task to simple annotation and selection from suggested rules, <br/>
 we allow fast exploration over the space of labeling functions.
  <br/>
 <img width=800px src=media/fast-exploration.gif>
