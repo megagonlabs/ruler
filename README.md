@@ -2,7 +2,7 @@
  
  See our [demo video](https://drive.google.com/file/d/1Z3b8wyTKoUX4b5jC8CJM9-DWuF87MwLE/view?usp=sharing) or [try it yourself](http://18.223.190.82:3000/).
  
- <img src=media/ruler_demo_gif.gif>
+ <img align="center" width="900" src=media/ruler_demo_gif.gif>
  
  
 This repo contains the source code for Ruler, a system that generates labeling functions from users' annotations of intelligently selected document examples (see our [KDD'20 submission](media/Ruler-KDD2020-Submission.pdf) for details). 
@@ -30,12 +30,24 @@ have programming literacy. Crucially, it is often difficult to convert domain kn
 through enumeration even for those who are proficient programmers. The accessibility of writing labeling functions is a 
 challenge in a wider use of data programming.
 
-To address this challenge, we introduce *__Data Programming by Demonstration__*, enabling users to label a few examples to demonstrate what labeling functions should do, instead of manually writing these functions. 
+<h4 align="center">
+<img  align="center" width="900" src="media/overview.png" />
+Overview of the data programming by demonstration framework. Straight lines indicate the flow of domain
+knowledge, and dashed lines indicate the flow of data.
+<br/>
+</h4>
+
+To address this challenge and make creating labeling functions easier, we introduce a new framework, __Data Programming by 
+Demonstration (DPBD)__, to synthesize labeling functions through user interactions. DPBD aims to move the burden of 
+writing labeling functions to an intelligent synthesizer while enabling users to steer the synthesis process at multiple
+semantic levels, from providing rationales relevant for their labeling choices to interactively
+filtering the proposed functions.  As a result, DBPB allows users to interactively label few examples 
+to demonstrate what labeling functions should do, instead of manually writing these functions. 
 
 ## <a name='Ruler'></a>How Does Řuler Apply DPBD?
 Řuler is an interactive tool that operationalizes data programming by demonstration for textural data. To that end, it 
 enables users to effectively sample (navigate) examples using active learning and label these examples while expressing  
-their labeling rationales by interactively annotating spans and relations. Řuler then  automatically suggests labeling 
+the rationales for labels by interactively annotating spans and their relations. Řuler then  automatically suggests labeling 
 functions to choose and refine from. Users also get interactive visual feedback about how their labeling functions 
 are performing.
 
