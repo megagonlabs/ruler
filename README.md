@@ -37,7 +37,7 @@ knowledge, and dashed lines indicate the flow of data.
 <br/>
 </h3>
 
-To address this challenge and make creating labeling functions easier, we introduce a new framework, __Data Programming by 
+To address this challenge, we introduce a new framework, __Data Programming by 
 Demonstration (DPBD)__, to synthesize labeling functions through user interactions. DPBD aims to move the burden of 
 writing labeling functions to an intelligent synthesizer while enabling users to steer the synthesis process at multiple
 semantic levels, from providing rationales relevant for their labeling choices to interactively
