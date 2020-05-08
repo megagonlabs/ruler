@@ -28,7 +28,7 @@ using inference over a generative graphical model. The denoised functions are th
 dataset to obtain probabilistic labels and train standard machine learning models in a noise-aware manner. Writing data programs or labeling functions can be, however, challenging. Most domain experts or lay users do not 
 have programming literacy. Crucially, it is often difficult to convert domain knowledge to a set of rules 
 through enumeration even for those who are proficient programmers. The accessibility of writing labeling functions is a 
-challenge in a wider use of data programming.
+challenge for wider adoption of data programming.
 
 <h3 align="center">
 <img  align="center" width="900" src="media/overview.png" />
