@@ -5,7 +5,8 @@
  <img align="center" width="900" src=media/ruler_demo_gif.gif>
  
  
-This repo contains the source code for Ruler, a system that generates labeling functions from users' annotations of intelligently selected document examples (see our [KDD'20 submission](media/Ruler-KDD2020-Submission.pdf) for details). 
+This repo contains the source code for Řuler, a system that generates labeling functions from users' annotations of
+intelligently selected document examples (see our [KDD'20 submission](media/Ruler-KDD2020-Submission.pdf) for details). 
 
 
 1. [What is Data Programming by Demonstration? (DPBD)](#DPBD)
@@ -22,8 +23,8 @@ The success of machine learning has dramatically increased the demand for high-q
 expensive to obtain, which inhibits broader utilization of machine learning models outside resource rich settings. 
 That's where data programming [[1](https://arxiv.org/pdf/1605.07723.pdf), [2](https://arxiv.org/pdf/1711.10160.pdf)] 
 comes in. Data programming aims to address the difficulty of collecting labeled data using a 
-programmatic approach to weak supervision by heuristics, where domain experts are expected to provide functions
-incorporating their domain knowledge to label subsets of a large training dataset. Since these labeling functions
+programmatic approach to weak supervision, where domain (subject-matter) experts are expected to provide functions
+incorporating their domain knowledge to label a subset of a large training dataset. Since these labeling functions
 may overlap or conflict with each other, they are denoised (i.e., the optimum corresponding weights are learned)
 using inference over a generative graphical model. The denoised functions are then applied to the large unlabeled 
 dataset to obtain probabilistic labels and train standard machine learning models in a noise-aware manner. Writing data programs or labeling functions can be, however, challenging. Most domain experts or lay users do not 
