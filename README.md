@@ -1,12 +1,7 @@
 # ŘULER: Data Programming by Demonstration for Text 
  
- See our [demo video](https://drive.google.com/file/d/1Z3b8wyTKoUX4b5jC8CJM9-DWuF87MwLE/view?usp=sharing) or [try it yourself](http://18.223.190.82:3000/).
- 
- <img align="center" width="900" src=media/ruler_demo_gif.gif>
- 
- 
 This repo contains the source code for Řuler, a system that generates labeling functions from users' annotations of
-intelligently selected document examples (see our [KDD'20 submission](media/Ruler-KDD2020-Submission.pdf) for details). 
+intelligently selected document examples (see our [EMNLP'20 submission](media/Ruler_EMNLP2020.pdf) for details). 
 
 
 1. [What is Data Programming by Demonstration? (DPBD)](#DPBD)
@@ -60,26 +55,6 @@ we allow fast exploration over the space of labeling functions.
 <img width=800px src=media/fast-exploration.gif>
 </h3>
 
-
-## <a name='Experiments'></a>Experimental Results 
-#### Comparing Ruler to other Methods of Generating Labeling Functions
-
-We wanted to understand the trade-offs of different models for creating labeling functions, so we conducted a user study.  Řuler was compared to manual ([Snorkel](https://towardsdatascience.com/introducing-snorkel-27e4b0e6ecff)), and natural-language based ([BabbleLabble](https://hazyresearch.github.io/snorkel/blog/babble_labble.html)) creation of functions. 
-
-We asked six participants to create labeling functions for two prevalent labeling tasks, spam detection and sentiment classification. For each task the participant was given 30 minutes and told to write as many functions as they considered necessary for the task.  In the exit surveys we inquired participants opinions about ease of use, expressivity, and ease of learning along with overall satisfaction with the tool.  
-
-Although we have limited data, participants rated Řuler highest in all subjective questions except expressivity by a small margin. Řuler is found to be almost as expressive as Snorkel (-0.08) and significantly more expressive than BabbleLabble (+2.58).
-
-<img align="middle" width=900px src=media/qualitative-ratings.svg>
-
-Overall, participants found Řuler easy to use and "cognitively very simple." Features such as "immediate visual feedback on how much a new rule increased/decreased the metrics" leading to shorter iterations "encouraged \[participants] not to be hesitant about trying out stuff" and to "create more labeling functions (and not be picky) and monitor how labeling functions interact and learn from those."
-
-### Importantly, the ease and speed afforded by Řuler does not incur a cost on the end model performance. 
-
-<img width=900px src=media/classifier-perfm.png>
-
-While we were expecting Řuler to lead in terms of ease of use and learning, equalling expressivity of a rich programming language with many constructs while being perceived as much richer than natural language came as a bit of surprise. 
-Initial results suggest that providing a simpler grammar with few constructs could achieve good results for most tasks. 
 
 **This allows users to focus on**
 
