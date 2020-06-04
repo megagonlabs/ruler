@@ -154,4 +154,3 @@ By default, the app will make calls to `localhost:5000`, assuming that you have 
 
 Once you have both of these running, navigate to `localhost:3000`.
 
-#### For more information on how to use the tool, see our [demo video](https://drive.google.com/file/d/1Z3b8wyTKoUX4b5jC8CJM9-DWuF87MwLE/view?usp=sharing).
