@@ -6,8 +6,7 @@ intelligently selected document examples (see our [EMNLP'20 submission](media/Ru
 
 1. [What is Data Programming by Demonstration? (DPBD)](#DPBD)
 2. [Řuler: DPBD for Text](#Ruler)
-3. [Experimental Results: Comparing Ruler to Other Methods of Generating Labeling Functions](#Experiments)
-4. [How to Use the Source Code in This Repo](#Use)
+3. [How to Use the Source Code in This Repo](#Use)
    - [Engine](#Engine)
    - [User Interface](#UI)
 
