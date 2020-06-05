@@ -84,9 +84,8 @@ All participants had significant programming experience (avg=12.1 years, std=6.5
 We find that Ruler and Snorkel provide comparable model performances (see figure below). The logistic regression models trained on data produced by labeling models created using Ruler have slightly higher f1 (W=35, p=0.49, r=0.24 ), precision (W=30, p=0.85, r=0.08), and recall (W=25, p=0.85, r=0.08) scores on average. Conversely, accuracy is slightly higher (W=17, p=0.32, r=0.15) for Snorkel models on average than Ruler. However these differences are not statistically significant. 
 
 <h3 align="center">
- Ruler and Snorkel provide comparable model performances
- <br />
 <img width=800px src=media/quantitative.png>
+<br />  Ruler and Snorkel provide comparable model performances
 </h3>
 
 
@@ -95,9 +94,9 @@ Participants find Ruler to be significantly easier to use
 Similarly, they consider Ruler easier to learn (W=30, p=0.1, r=0.59) than Snorkel.  On the other hand, as we expected, participants report Snorkel to be more expressive (W=0, p=0.05, r=0.70)  than  Ruler. However, our participants appear to consider accessibility (ease of use and ease of learning) to be more important criteria, rating Ruler higher (W=43, p=0.12, r=0.51) than Snorkel for overall satisfaction.  
 
 
-<h3>
-Participants' subjective ratings on ease of use, expressivity, ease of learning and overall satisfaction, on a 5-point Likert scale. <br/>
-<img width=800px src=media/qualitative.pdf>
+<h3 align="center">
+<img width=800px src=media/qualitative.png>
+<br/>Participants' subjective ratings on ease of use, expressivity, ease of learning and overall satisfaction, on a 5-point Likert scale. 
 </h3>
 
 # <a name='Use'></a>How to use the source code in this repo
