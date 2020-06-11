@@ -4,7 +4,7 @@ This repo contains the source code for Řuler, a system that generates labeling 
 intelligently selected document examples (see our [EMNLP'20 submission](media/Ruler_EMNLP2020.pdf) for details). 
 
 
-Check out our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) to see Ruler in action on a spam classification task.
+Check out our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) to see Ruler in action on a spam classification task, or [try it yourself](http://54.83.150.235:3000/) on a sentiment analysis task.
 
 <h3 align="center">
 <img width=800px src=media/ruler_teaser.gif>
@@ -190,4 +190,6 @@ npm start
 By default, the app will make calls to `localhost:5000`, assuming that you have the server running on your machine. (See the [instructions above](#Engine)).
 
 Once you have both of these running, navigate to `localhost:3000`.
+
+You can also try our live demo [here](http://54.83.150.235:3000)
 
