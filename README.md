@@ -3,8 +3,11 @@
 This repo contains the source code for Řuler, a system that generates labeling functions from users' annotations of
 intelligently selected document examples (see our [EMNLP'20 submission](media/Ruler_EMNLP2020.pdf) for details). 
 
+
+Check out our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) to see Ruler in action on a spam classification task.
+
 <h3 align="center">
-<img width=800px src=media/ruler_teaser_tall.png>
+<img width=800px src=media/ruler_teaser.gif>
 </h3>
 
 1. [What is Data Programming by Demonstration? (DPBD)](#DPBD)
@@ -45,6 +48,11 @@ filtering the proposed functions.  As a result, DBPB allows users to interactive
 to demonstrate what labeling functions should do, instead of manually writing these functions. 
 
 ## <a name='Ruler'></a>Řuler: DPBD for Text
+
+<h3 align="center">
+<img width=800px src=media/ruler_teaser_wide.png>
+</h3>
+
 Řuler is an interactive tool that operationalizes data programming by demonstration for textural data. To that end, it 
 enables users to effectively sample (navigate) examples using active learning and label these examples while expressing  
 the rationales for labels by interactively annotating spans and their relations. Řuler then  automatically suggests labeling 
