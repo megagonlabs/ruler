@@ -107,6 +107,8 @@ Similarly, they consider Ruler easier to learn (W=30, p=0.1, r=0.59) than Snorke
 <br/>Participants' subjective ratings on ease of use, expressivity, ease of learning and overall satisfaction, on a 5-point Likert scale. 
 </h3>
 
+The data from our user study is available [here](https://github.com/rulerauthors/ruler/tree/master/user_study), along with [the code to generate all of our figures](https://github.com/rulerauthors/ruler/blob/master/user_study/ruler_user_study_figures.ipynb).
+
 # <a name='Use'></a>How to use the source code in this repo
 
 Follow these instructions to run the system on your own, where you can plug in your own data and save the resulting labels, models, and annotations.
