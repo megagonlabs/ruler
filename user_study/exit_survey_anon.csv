@@ -1,0 +1,81 @@
+,Timestamp,Which tool are you evaluating?,"Overall, I was satisfied with the tool.",This tool was easy to use.,The tool is expressive enough to capture most of the functions I wanted to write.,It was easy to learn,"Do you have any comments on what worked or what didn't work? What strategies, if any, did you use when writing labeling functions?",How would you improve this tool?,"Do you have any feedback about how the study was conducted? If so, please tell us! (Otherwise, leave blank)",Anything other comments?,participant
+0,5/26/2020 21:50:22,Ruler,4,4,2,4,,1. summary panel for labeling function helping to group and delete/add LFs. 2. adding LFs not by examples should be combined,,,p7
+1,5/28/2020 0:53:30,Snorkel,3,2,5,4,,,,,p7
+2,5/18/2020 16:31:39,Ruler,5,5,5,5,"I wonder if I should have added more functions more quickly and done more pruning given the diffs.
+
+I do think that organizing labelling functions into concepts helped quite a bit. However, users who are using concepts to organize their functions (and thus modifying their concepts over time) would want to see diffs for the statistics after each concept modification.","Below are the bugs we discussed. I am not suggesting they all need to be fixed :).
+1. When I submitted a value modification for a concept row, the span annotations in the text did not update unless a new span could be identified in the text after the modification. Example: changing ""firearm"" to ""fire"" would cause the annotations to update, but a change from ""firearm"" to ""filkjwerlkjsdf"" would not cause an update.
+2. I could not delete concept rows.
+
+Below are some possible improvements I can think of:
+1. I wasn't always sure when a concept modification had taken effect. It would be nice if there were some indication in the UI that the concept modification was in fact affect the output.
+2. We could show a plot of the historical performance of the model over time. The plot could be a multi-line chart of statistics in the top-right corner on the y-axis and the chronological change id on the x-axis. Then, if a user were to click on a point in the plot, they would see a modal that would ask them if they would like to download the model from that point in time.
+3. It would be nice to see class-specific statistics for snorkel's labelling model.
+4. Should we give the user the option to select ""weighted average"" or ""simple average"" for the statistics on the entire development set?
+5. I do think that organizing labelling functions into concepts helped quite a bit. Users who are using concepts to organize their functions (and thus modifying their concepts over time) would want to see diffs for the statistics after each concept modification.",I thought it was conducted very well!,Thanks!,p3
+3,5/19/2020 17:19:47,Snorkel,4,4,5,4,"What worked:
+1. Writing my own functions to analyze why labeling functions were making incorrect predictions
+2. I didn't have time to do this, but I would have probably analyzed the model performance metrics myself. We ran into a problem where we weren't entirely sure how the metrics were being calculated, and so I would probably calculate them myself to have complete understanding.","They may already have this, but I would add the ability to pass in your own metric definitions to the evaluation step","The study was great! I would use the ""Table of Contents (2)"" extension to enable the users to more easily navigate the Jupyter Notebook.
+
+https://jupyter-contrib-nbextensions.readthedocs.io/en/latest/nbextensions/toc2/README.html
+
+https://jupyter-contrib-nbextensions.readthedocs.io/en/latest/","We were having trouble determining why Snorkel was telling us we had classified 94 positive results correctly and 0 incorrectly but achieved only 47% accuracy. I think Snorkel was saying we correctly labeled 94 of the 94 actual positive examples, and 47% of the examples we identified as positive were actually positive. In other words, Snorkel was telling us that our recall was 100% and our precision was 47%.",p3
+5,5/27/2020 11:58:35,Snorkel,3,2,5,2,"It was hard to write complex functions because of the time limit. I wanted to see overall statistics of the term frequency, but I was not able to check the statistics easily in time.
+So, I just used simple keyword matching as labeling functions","I would show statistics about term frequency to users to help writing labeling functions. Also, I would like to make some helper functions to get synonyms and antonyms easily available, so that a user can improve coverage of simple keyword-matching strategy.",Tutorial and explanations were thorough. The researcher remained unbiased and objective.,,p9
+6,5/28/2020 17:48:54,Ruler,4,5,4,5,"I tried to construct concepts with relevant keywords for each label. This strategy worked for certain label (spam) but didn't work well for another label (not spam). I also tried to build rules based on entity labels, but it didn't work well.","I'd add the 'not have' condition. It was hard to find out 'must-have' keywords for the 'not spam' label. I'd like to add some statistical characteristics (word count, text length) of a data record and synthesize in/equalities using them.",,,p9
+7,5/19/2020 13:07:39,Snorkel,3,3,4,4,"I'm used using Python, but I usually need to double check many of the commands syntax, so it makes the process of generating the rules a little bit slower.",The pre-defined functions provided by the responsible for the experiment helped a lot. Having more pre-defined functions would be very useful (even for programmers).,I liked it.,,p4
+8,5/22/2020 16:13:58,Ruler,5,5,4,5,"I enjoyed using the tool! I could quickly define a set of rules with reasonable Precision/Recall over the available data. It would take much longer to get to the same performance without the help of Ruler. 
+One type of rule that I could not create is for negative examples. I tried to create a rule that would be a negative example of spam. In the controlled experiment scenario (as it is a binary classification task) I could get the same effect by set the ""negative example rule"" for one class as a ""positive example"" rule to the other class.
+Also, I tried to create a rule (based on my domain knowledge) that was not specifically associated to a instance, but I could not.","Allowing the addition of:
+1)  ""negative examples rules"";
+2) general rules (not associated to any specific example);
+3) a ""python window"" in which you could use python code (as used in Snorkel), thus explore best of both worlds (the easiness and speed of current Ruler, and the expressiveness of Snorkel)",,,p4
+9,5/26/2020 17:21:20,Ruler,5,4,4,3,"Work
+1. The tool can capture keyword-based functions. 
+2. The tool supports AND and OR operators. 
+
+Didn't work
+1. Some terms are not well-defined (e.g. Concept).
+2. The tool lacks step-by-step documents.  ","1. Give formal definitions to key terms. 
+2. Prepare a step-by-step tutorial.  ",The tool is cool. ,,p6
+10,5/27/2020 16:32:21,Snorkel,4,4,4,2,"Worked
+1. Snorkel supports python that I am familiar with. 
+2. Snorkel enables me to leverage programming skills to label data.
+
+Didn't work
+1. Snorkel is coding intensive that I have to run multiple Snorkel cells to evaluate labelling functions. 
+2. Snorkel does not instantly evaluate labeling functions. I have to rerun evaluation codes each time I update labeling functions. ","1. Reduce unnecessary coding as much as possible. 
+2. Make the evaluation of labeling functions instant. ",The Snorkel tool is cool. ,,p6
+11,5/22/2020 16:03:20,Ruler,3,5,3,5,,,,,p5
+12,5/26/2020 13:57:27,Snorkel,5,4,5,5,,,,,p5
+13,5/19/2020 17:59:17,Ruler,4,3,4,2,Categorizing tokens was hard.for me,"When I mouse over token(s), I wished I had a popup to categorize it",,It was great exercise for me! thank you!,p0
+14,5/19/2020 22:40:46,Snorkel,5,4,5,4,I firstly write functions so that recalls get high.,"If non-essential codes (e.g. evaluation codes) were defined out of the notebooks, they would be more easy to understand.",,Great experiments! I will look into snorkel as I have some ML tasks. Thanks!,p0
+15,5/20/2020 12:29:57,Snorkel,2,3,4,3,,,,,p1
+16,5/21/2020 14:57:31,Ruler,4,5,4,4,"I noticed that my label accuracy did not constantly improving: first improves and then drops. Maybe this is just an extreme case, but I feel it is important to validate if other users also show similar trend.",Scalability: the system becomes slower towards the end. Further optimization & approximation could be considered.,,,p1
+17,5/20/2020 14:55:28,Snorkel,2,2,4,2,My strategy was to directly take a look at examples and came up with salient words/phrases to write down keyword-based labeling functions. ,"I was confused with the metric shown in the second block of the Apply function section. The comment ""Don't worry"" was not enough for me to disregard the value. :p
+
+My work was going back and forth between labeling function, applying function and training a classifier. I would be helpful if the cells that the user runs are compiled into a single function (on a single cell) so I could simply call the function.
+
+For example, prepare a function that traverses the namespace to list up any functions that begin with lf (or a longer prefix if it conflicts with something).
+","The instructions are clear and the user study is organized well. I'm curious about the (psychological) effect of the time limit and being monitored/recorded.
+
+I may not pay attention but the input argument `x` of each labeling function was not clear at the beginning, which took a couple of minutes to figure out.",,p2
+18,5/22/2020 0:56:40,Ruler,4,5,3,5,"My strategy is simply adding salient words/phrases of each class while monitoring the dev set performance. As I added labeling functions, I tried to create more detailed rules as I progress.","1)
+It was not very intuitive how the system makes use of the labeling functions I made. What I was confused is when I saw the recall of class 0 dropped after adding labeling function for class 0. I had to conduct label-function engineering to figure out the best combination.
+
+2)
+As I asked during the user study, it would be helpful if I could directly add rules that are not activated by the current example (which I could with Snorkel.)
+
+3)
+Somehow, it seems that the data has more positive examples than negative examples. It will be helpful if the system has a search function to retrieve a negative example (that contains certain words etc.)
+
+4)
+I found several examples from which I didn't want to create labeling functions, but I would like to simply label the examples. This may be for the user study but only allowing the user to create labeling functions may not be the best way.
+
+5)
+Similarly, in practice, it should be better having a base classifier/base dictionary as a starting point. For example (I worked on a sentiment analysis task today), using a pre-trained classifier (trained on other sentiment classifier dataset) and/and/or using sentiment dictionary that contains words with sentiment polarity information. I feel like what I did with the system is approximately close to reconstructing an affective dictionary from scratch (tuned toward the dataset, in one sense.)
+","The user study was well organized and instructions were clear.
+
+I'm wondering if the user study randomly shuffles the order of methods. Although two tools/datasets are different, I feel like I was more prepared to work on the task.",,p2
+19,5/28/2020 14:12:46,Snorkel,3,4,2,4,"I tried to create a bunch of labeling functions on filtering by certain tokens at beginning and see how each works; then I modified those that turn out to have most wrong labels and got better results. Also I tried to have labeling functions on length and non-letters of the text, which seems to be not very useful. I should have tried to ensemble the labeling functions, which would have improve the coverage a lot.","Providing more stats/exploration options in terms of helping the user improve coverage. Instead of simply showing overlapping and conflicts, it would be better to see the samples and stats of two LFs by their overlap or conflict. Also it could automatically search for ensembling the labeling functions and provide suggestions to the user.",,,p8
+20,5/28/2020 15:59:44,Ruler,4,4,2,5,"I think it is task dependent. For sentiment analysis, the coverage of labeling functions on certain tokens or phrases can be relatively small and may not be accurate as there are many variants in the phrase and the negation would affect the result. ","Like snorkel, I think auto suggestions on improving the coverage of LFs could be very helpful. And it may be useful to allow users combine LFs or edit LFs in python in order to reduce the execution time and to be more flexible for users with coding experience. The regex concept should be very useful but I only use it for several times, and I think it would be great if the tool can suggest regex expressions based on user's annotation.",I feel that there could be 10-15 more time after the tutorial for users to play with the tool on the example task. In both user studies I figured out ways to improve the performance shortly after it is finished.,,p8
