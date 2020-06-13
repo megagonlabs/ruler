@@ -61,7 +61,7 @@ functions for users to choose and refine from. Users also get continuous visual 
 By limiting users' task to simple annotation and selection from suggested rules, <br/>
 we allow fast exploration over the space of labeling functions.
  <br/>
-<img height=200px src=media/fast-exploration-thin.gif>
+<img width=800px src=media/fast-exploration-alt.gif>
 </h3>
 
 
