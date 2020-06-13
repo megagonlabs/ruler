@@ -55,7 +55,7 @@ to demonstrate what labeling functions should do, instead of manually writing th
 Ruler is an interactive tool that operationalizes data programming by demonstration for document text. To that end, it 
 enables users to effectively sample (navigate) examples using active learning and label these examples while expressing  
 the rationales for labels by interactively annotating spans and their relations. Ruler then  automatically suggests labeling 
-functions for users to choose and refine from. Users also get continuous interactive visual feedback about how their labeling functions are performing.
+functions for users to choose and refine from. Users also get continuous visual feedback about how their labeling functions are performing.
 
 <h3 align="center">
 By limiting users' task to simple annotation and selection from suggested rules, <br/>
