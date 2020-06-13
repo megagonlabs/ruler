@@ -1,7 +1,6 @@
-# ŘULER: Data Programming by Demonstration for Text 
+# RULER: Data Programming by Demonstration for Text 
  
-This repo contains the source code for Řuler, a system that generates labeling functions from users' annotations of
-intelligently selected document examples (see our [EMNLP'20 submission](media/Ruler_EMNLP2020.pdf) for details). 
+This repo contains the source code and the user evaluation data and analysis scripts for Ruler, a data programming by interactive demonstration system for document labeling. Ruler synthesizes labeling rules using span-level annotations that  represent users’ rationales or explanations for their labeling decisions on document examples (see our [EMNLP'20 submission](media/Ruler_EMNLP2020.pdf) for details). 
 
 
 **Check out our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) to see Ruler in action on a spam classification task, or [try it yourself](http://54.83.150.235:3000/) on a sentiment analysis task.**
@@ -11,7 +10,7 @@ intelligently selected document examples (see our [EMNLP'20 submission](media/Ru
 </h3>
 
 1. [What is Data Programming by Demonstration? (DPBD)](#DPBD)
-2. [Řuler: DPBD for Text](#Ruler)
+2. [Ruler: DPBD for Text](#Ruler)
 3. [Evaluation of Ruler](#Eval)
 3. [How to Use the Source Code in This Repo](#Use)
    - [Engine](#Engine)
@@ -47,17 +46,16 @@ semantic levels, from providing rationales relevant for their labeling choices t
 filtering the proposed functions.  As a result, DBPB allows users to interactively label few examples 
 to demonstrate what labeling functions should do, instead of manually writing these functions. 
 
-## <a name='Ruler'></a>Řuler: DPBD for Text
+## <a name='Ruler'></a>Ruler: DPBD for Text
 
 <h3 align="center">
 <img width=800px src=media/ruler_teaser_wide.png>
 </h3>
 
-Řuler is an interactive tool that operationalizes data programming by demonstration for textural data. To that end, it 
+Ruler is an interactive tool that operationalizes data programming by demonstration for document text. To that end, it 
 enables users to effectively sample (navigate) examples using active learning and label these examples while expressing  
-the rationales for labels by interactively annotating spans and their relations. Řuler then  automatically suggests labeling 
-functions to choose and refine from. Users also get interactive visual feedback about how their labeling functions 
-are performing.
+the rationales for labels by interactively annotating spans and their relations. Ruler then  automatically suggests labeling 
+functions for users to choose and refine from. Users also get continuous interactive visual feedback about how their labeling functions are performing.
 
 <h3 align="center">
 By limiting users' task to simple annotation and selection from suggested rules, <br/>
