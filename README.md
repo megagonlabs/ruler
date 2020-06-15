@@ -5,6 +5,8 @@ This repo contains the source code and the user evaluation data and analysis scr
 
 **Check out our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) to see Ruler in action on a spam classification task, or [try it yourself](http://54.83.150.235:3000/) on a sentiment analysis task.**
 
+You can also find the data from our user study <a href=https://github.com/rulerauthors/ruler/tree/master/user_study>here</a>, along with <a href=https://github.com/rulerauthors/ruler/blob/master/user_study/ruler_user_study_figures.ipynb>the code to generate all of our figures and analysis</a>. 
+
 <h3 align="center">
 <img width=800px src=media/ruler_teaser.gif>
 </h3>
@@ -82,8 +84,12 @@ we allow fast exploration over the space of labeling functions.
   
 ## <a name='Eval'></a>Evaluation
 
-We conducted a user study with 10 data scientists and measured  their task performance accuracy in completing two prevalent labeling tasks: spam detection and sentiment classification.  They performed these two tasks on  [YouTube Comments](https://archive.ics.uci.edu/ml/datasets/YouTube+Spam+Collection) and [Amazon Reviews](https://www.kaggle.com/bittlingmayer/amazonreviews), respectively. In addition to task performance, we also analyzed the accessibility and  expressivity of both methods using the qualitative feedback elicited from participants and our observations gathered during the study sessions. 
+We conducted a user study with 10 data scientists and measured their task performance accuracy in completing two prevalent labeling tasks: spam detection and sentiment classification.  They performed these two tasks on  [YouTube Comments](https://archive.ics.uci.edu/ml/datasets/YouTube+Spam+Collection) and [Amazon Reviews](https://www.kaggle.com/bittlingmayer/amazonreviews), respectively. In addition to task performance, we also analyzed the accessibility and  expressivity of both methods using the qualitative feedback elicited from participants and our observations gathered during the study sessions. 
 
+
+<h3> 
+ The data from our user study is available <a href=https://github.com/rulerauthors/ruler/tree/master/user_study>here</a>, along with <a href=https://github.com/rulerauthors/ruler/blob/master/user_study/ruler_user_study_figures.ipynb>the code to generate all of our figures</a>. 
+</h3>
 
 All participants had significant programming experience (avg=12.1 years, std=6.5). Their experience with Python programming ranged from 2 to 10 years with an average of 5.2 years (std=2.8).  
 
@@ -104,8 +110,6 @@ Similarly, they consider Ruler easier to learn (W=30, p=0.1, r=0.59) than Snorke
 <img width=800px src=media/qualitative.png>
 <br/>Participants' subjective ratings on ease of use, expressivity, ease of learning and overall satisfaction, on a 5-point Likert scale. 
 </h3>
-
-The data from our user study is available [here](https://github.com/rulerauthors/ruler/tree/master/user_study), along with [the code to generate all of our figures](https://github.com/rulerauthors/ruler/blob/master/user_study/ruler_user_study_figures.ipynb).
 
 # <a name='Use'></a>How to use the source code in this repo
 
