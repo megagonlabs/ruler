@@ -2,6 +2,16 @@ import tensorflow as tf
 
 
 def get_keras_logreg(input_dim, output_dim=2):
+    # set all random seeds
+    import tensorflow as tf
+    from numpy.random import seed as np_seed
+    from random import seed as py_seed
+    from snorkel.utils import set_seed as snork_seed
+    snork_seed(123)
+    tf.random.set_seed(123)
+    np_seed(123)
+    py_seed(123)
+
     model = tf.keras.Sequential()
     if output_dim == 1:
         loss = "binary_crossentropy"
@@ -19,6 +29,7 @@ def get_keras_logreg(input_dim, output_dim=2):
     opt = tf.keras.optimizers.Adam(lr=0.01)
     model.compile(optimizer=opt, loss=loss, metrics=["accuracy"])
     return model
+
 
 
 def get_keras_early_stopping(patience=10):

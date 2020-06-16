@@ -12,20 +12,26 @@ class RelationshipType(Enum):
 
 DELIMITER = '#'
 CONNECTIVE = 'Connective'
+CONTEXT = 'Context'
 DIRECTION = 'Direction'
 CONDS = 'Conditions'
 WEIGHT = 'Weight'
 LABEL = 'Label'
 ID = 'ID'
 
-AND = 'AND'
-OR = 'OR'
+AND = 'AND' # all conditions occuring anywhere in the text
+OR = 'OR' # any of the conditions occuring
+
 TOKEN = 'TOKEN'
 REGEXP = 'REGEXP'
 CONCEPT = 'CONCEPT'
 NER = 'NER'
 
-ConnectiveType = {AND: 0, OR: 1}
+SENTENCE = "SENTENCE"
+
+ConnectiveType = {OR: 0, AND: 1}
+
+ContextType = {SENTENCE: 1}
 
 KeyType = {TOKEN: 0, CONCEPT: 1, NER: 2, REGEXP: 3}
 
@@ -38,11 +44,20 @@ class ConceptWrapper:
     def __str__(self):
         return self.name
 
+    def __len__(self):
+        return len(self.dict.keys())
+
     def get_dict(self):
         return self.dict
 
     def add_element(self, name: str, elements):
-        self.dict[name] = elements
+        # make sure there are no duplicates in elements:
+        def unique_hash(elt):
+            string_id = "#".join([elt.get("string"), str(elt.get("case_sensitive")), str(elt.get("type"))])
+            elt["key"] = string_id
+            return string_id
+        elt_hashes = {unique_hash(elt): elt for elt in elements}
+        self.dict[name] = list(elt_hashes.values())
 
     def get_elements(self, name: str):
         return self.dict[name]
@@ -65,9 +80,17 @@ class ConceptWrapper:
             self.dict = json.load(file)
 
 
-
-# user defined token, usually a word
 class Token:
+
+    """user defined token, usually a word 
+    
+    Attributes:
+        concept_name (string): if the token is assigned to a concept, the name of the concept
+        ner_type (string): spacy-defined Named Entity code (for example, ORDINAL for "first")
+        sent_idx (int): Which sentence in the document the token belongs to
+        text (string): the text of the token
+    """
+    
     def __init__(self, T):
         self.text = T
         self.sent_idx = -1
@@ -87,11 +110,21 @@ class Token:
         self.ner_type = ner
 
 
-# user defined binary relationship
 class Relationship:
+
+    """user defined relationshpi between a set of Tokens. 
+    Can be OR, AND (directional or non-directional)
+    
+    Attributes:
+        list (Token): List of annotated spans
+        same_sentence (bool): Whether or not the conditions must occur in the same sentence
+        type (int): A code describing the relationship type (AND, OR, etc.)
+    """
+    
     def __init__(self, type: RelationshipType):
         self.list = [] # a list of Token
         self.type = type
+        self.context = None
 
     def __str__(self):
         pass
@@ -127,9 +160,11 @@ class Relationship:
         if self.type == RelationshipType.SET:
             for crnt_instance in instances:
                 crnt_instance[CONNECTIVE] = ConnectiveType[OR]
+                crnt_instance["CONNECTIVE_"] = OR
         else:
             for crnt_instance in instances:
                 crnt_instance[CONNECTIVE] = ConnectiveType[AND]
+                crnt_instance["CONNECTIVE_"] = AND
 
         if self.type == RelationshipType.DIRECTED:
             for crnt_instance in instances:
@@ -143,26 +178,47 @@ class Relationship:
             if crnt_token.concept_name is not None:
                 # copy previous instances, one for adding token, the other for adding concept
                 cp_instances = copy.deepcopy(instances)
-                crnt_cond_concept = {crnt_token.concept_name: KeyType[CONCEPT]}
+                crnt_cond_concept = Condition(crnt_token.concept_name, CONCEPT)
                 for crnt_instance in cp_instances:
                     crnt_instance[CONDS].append(crnt_cond_concept)
 
             elif crnt_token.ner_type is not None:
                 # make a copy too, the new one is for adding ner
                 cp_instances = copy.deepcopy(instances)
-                crnt_cond_ner = {crnt_token.ner_type: KeyType[NER]}
+                crnt_cond_ner = Condition(crnt_token.ner_type, NER)
                 for crnt_instance in cp_instances:
                     crnt_instance[CONDS].append(crnt_cond_ner)
-
             # add token into instances
-            crnt_cond_token = {crnt_token.text.lower(): KeyType[TOKEN]}
+            crnt_cond_token = Condition(crnt_token.text.lower(), TOKEN, False)
             for crnt_instance in instances:
                 crnt_instance[CONDS].append(crnt_cond_token)
-
             # merge the cp_instances into instances
             if cp_instances is not None:
                 instances.extend(cp_instances)
 
+        cp_instances = []
+
+        for crnt_instance in instances:
+            if crnt_instance[CONNECTIVE] == ConnectiveType[AND]:
+                # if the connective type is AND, and the conditions are in the same sentence, 
+                # create a duplicate instance with the connective type AND_SENTENCE
+                sentence_idx = self.list[0].sent_idx
+                same_sent = True
+                for token in self.list:
+                    if token.sent_idx != sentence_idx:
+                        same_sent = False
+                if same_sent:
+                    print("same sentence!")
+                    new_instance = copy.deepcopy(crnt_instance)
+                    new_instance[CONTEXT] = ContextType[SENTENCE]
+                    new_instance["CONTEXT_"] = SENTENCE
+                    cp_instances.append(new_instance)
+
+        if len(cp_instances) > 0:
+            instances.extend(cp_instances)
+        print("all instances: ")
+        for crnt_instance in instances:
+            print(crnt_instance)
         return instances
 
 
@@ -189,3 +245,11 @@ class Label:
         crnt_keys = list(self.dict.keys())
         crnt_keys.remove("ABSTAIN")
         return {lname: self.dict[lname] for lname in crnt_keys}
+
+def Condition(string, type_str, case_sensitive=False):
+    return {
+        "string": string, 
+        "type": KeyType[type_str], 
+        "TYPE_": type_str,
+        "case_sensitive": case_sensitive 
+    }

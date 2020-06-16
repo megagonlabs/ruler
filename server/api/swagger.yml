@@ -13,13 +13,21 @@ basePath: /api
 definitions:
   Condition:
     type: object
-    additionalProperties:
-      type: integer
+    properties:
+      string: 
+        type: string
+      type: 
+        type: integer
+      case_sensitive: 
+        type: boolean
   Instance:
     type: object
     properties:
       Connective:
         type: integer
+      CONNECTIVE_:
+        type: string
+        description: String explanation of the connective type
       Direction:
         type: boolean
       Label:
@@ -32,9 +40,9 @@ definitions:
           type: object
           $ref: '#/definitions/Condition'
   Tokens:
-    type: object
-    additionalProperties:
-      type: integer
+    type: array
+    items:
+      $ref: '#/definitions/Condition'
   Annotation:
     type: object
     properties:
@@ -122,7 +130,7 @@ paths:
                 description: The name of new concept
               tokens:
                 $ref: '#/definitions/Tokens'
-                description: dictionary of tokens that belong to the new concept
+                description: List of tokens that belong to the new concept
       responses:
         200:
           description: OK
@@ -144,7 +152,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/Tokens'
-            description: Dictionary of tokens and their keytypes that belong to the requested concept
+            description: List of tokens and their keytypes that belong to the requested concept
     put:
       operationId: idea2.update_tokens
       tags:
@@ -198,6 +206,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/Annotation'
+              index:
+                type: integer
     post:
       operationId: idea2.submit_interaction
       tags:
@@ -211,7 +221,7 @@ paths:
           schema:
             type: object
             properties:
-              text_origin:
+              text:
                 type: string
                 description: The original text
                 example: "pleas subscribe on me to my channel"
@@ -275,12 +285,13 @@ paths:
               id:
                 type: integer
                 description: The index of this interaction
-              text_origin:
+              text:
                 type: string
                 description: The original text
-              text_labeled:
-                type: string
-                description: The labeled text
+              annotations:
+                type: array
+                items: 
+                  $ref: '#/definitions/Annotation'
               label:
                 type: integer
                 description: User selected labels
@@ -321,6 +332,30 @@ paths:
               count:
                 type: integer
                 description: Count of interaction rounds
+  /lr_statistics:
+    get:
+      operationId: idea2.get_logreg_stats
+      tags:
+        - Logistic Regression Model Statistics
+      summary: Get the current quality statistics of an LR model trained on your labels
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              precision:
+                type: number
+                format: float
+                description: Precision
+              recall:
+                type: number
+                format: float
+                description: Recall
+              f1:
+                type: number
+                format: float
+                description: F1 score
 
   /labelingfunctions:
     get:
@@ -366,21 +401,40 @@ paths:
         200:
           description: OK
           schema:
-            type: array
-            items:
-              type: object
-              properties:
-                text:
-                  type: string
-                  description: The text of the labeled example
-                label:
-                  type: integer
-                  description: The label assigned by this function
-                annotations:
-                  type: array
-                  items: 
-                    $ref: '#/definitions/Annotation'
-                  description: The annotations by this function over the text
+            type: object
+            properties:
+              examples:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    text:
+                      type: string
+                      description: The text of the labeled example
+                    label:
+                      type: integer
+                      description: The label assigned by this function
+                    annotations:
+                      type: array
+                      items: 
+                        $ref: '#/definitions/Annotation'
+                      description: The annotations by this function over the text
+              mistakes:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    text:
+                      type: string
+                      description: The text of the erroneous label
+                    label:
+                      type: integer
+                      description: The erroneous label assigned by this function
+                    annotations:
+                      type: array
+                      items: 
+                        $ref: '#/definitions/Annotation'
+                      description: The annotations by this function over the text
 
   /save:
     post:

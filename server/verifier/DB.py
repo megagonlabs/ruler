@@ -12,11 +12,16 @@ class InteractionDBSingleton:
         self.count = 0
 
     def add(self, interaction: dict):
-        index = self.count
-        interaction["index"] = index
-        interaction['time_submitted'] = datetime.now()
-        self.db[index] = interaction
-        self.count += 1
+        if "index" in interaction:
+            index = interaction["index"]
+            interaction['time_submitted'] = datetime.now()
+            self.db[index].update(interaction)
+        else:
+            index = self.count
+            interaction["index"] = index
+            interaction['time_first_seen'] = datetime.now()
+            self.db[index] = interaction
+            self.count += 1
         return index
 
     def update(self, index: int, selected_lf_ids: list):
@@ -52,18 +57,27 @@ class LFDBSingleton:
     def add_lfs(self, lf_dicts: dict, all_concepts):
         new_lfs = {}
         for lf_hash, lf_explanation in lf_dicts.items():
-            lf_explanation["time_submitted"] = datetime.now()
-            lf_explanation["ID"] = self.lf_index
-            self.lf_index += 1
+            if not lf_hash in self.db:
+                lf_explanation["time_submitted"] = datetime.now()
+                lf_explanation["ID"] = self.lf_index
+                lf_explanation["active"] = True
+                self.lf_index += 1
 
-            crnt_lf = make_lf(lf_explanation, all_concepts.get_dict())
-            new_lfs[lf_hash] = crnt_lf
-
-            self.db[lf_hash] = lf_explanation
+                crnt_lf = make_lf(lf_explanation, all_concepts.get_dict())
+                self.db[lf_hash] = lf_explanation
+                new_lfs[lf_hash] = crnt_lf
+            else:
+                self.db[lf_hash]["active"] = True
+                new_lfs[lf_hash] = make_lf(self.db[lf_hash], all_concepts.get_dict())
+            
         return new_lfs
 
     def delete(self, lf_id: str):
-        self.db.pop(lf_id)
+        return self.db.pop(lf_id)
+
+    def deactivate(self, lf_id: str):
+        self.db[lf_id]["active"] = False
+        return self.db[lf_id]
 
     def update(self, stats: dict):
         for lf_id, stats_dict in stats.items():
@@ -83,10 +97,13 @@ class LFDBSingleton:
                 "lf_index": self.lf_index
                 }, file, default=str)
 
-    def load(self, dirname):
+    def load(self, dirname, all_concepts):
         with open(os.path.join(dirname, self.filename), "r") as file:
             data = json.load(file)
-            self.db = data['db']
+            lfs = data['db']
+            self.db.update({k:v for k,v in lfs.items() if not v['active']})
             self.lf_index = data['lf_index']
+            return self.add_lfs({k:v for k,v in lfs.items() if v['active']}, all_concepts)
+
 
 LF_DB = LFDBSingleton()

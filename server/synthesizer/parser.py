@@ -5,6 +5,7 @@ from typing import List
 
 
 nlp = spacy.load("en_core_web_sm")
+nlp.add_pipe(nlp.create_pipe('sentencizer'), first=True)
 
 
 def parse(annotations: List[dict], origin_text: str, delimiter: str, concepts: dict):
@@ -16,7 +17,6 @@ def parse(annotations: List[dict], origin_text: str, delimiter: str, concepts: d
     sentences = list(origin_doc.sents)
 
     for annotation in annotations:
-        print(annotation)
 
         # crnt_token: text
         crnt_token_text = origin_text[annotation["start_offset"]:annotation["end_offset"]]
@@ -43,7 +43,9 @@ def parse(annotations: List[dict], origin_text: str, delimiter: str, concepts: d
         flag: bool = False
         # print(annotated_text)
         for crnt_sent in sentences:
-            if (crnt_token_text in crnt_sent.text):
+            sent_start = origin_doc[crnt_sent.start].idx
+            sent_end = origin_doc[crnt_sent.end-1].idx + len(origin_doc[crnt_sent.end-1])
+            if (annotation["start_offset"] >= sent_start) and (annotation["end_offset"]<=sent_end):
                 crnt_token.assign_sent_idx(sentences.index(crnt_sent))
                 flag = True
                 break
@@ -58,9 +60,6 @@ def parse(annotations: List[dict], origin_text: str, delimiter: str, concepts: d
 
     # Match existing concepts
     augment_concept(token_list, concepts)
-
-    print(token_list)
-    print(rel_code_list)
 
     return token_list, rel_code_list
 

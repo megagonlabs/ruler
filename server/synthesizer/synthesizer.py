@@ -121,11 +121,12 @@ def calc_weight(instances, concepts):
     for crnt_instance in instances:
         crnt_weight = 0
         for crnt_cond in crnt_instance[CONDS]:
-            for k, v in crnt_cond.items():
-                if v == KeyType[CONCEPT]:
-                    crnt_weight += len(concepts[k])
-                elif v == KeyType[NER]:
-                    crnt_weight += 1
+            k = crnt_cond.get("string")
+            v = crnt_cond.get("type")
+            if v == KeyType[CONCEPT]:
+                crnt_weight += len(concepts[k])
+            elif v == KeyType[NER]:
+                crnt_weight += 1
         crnt_instance[WEIGHT] = crnt_weight
 
 
