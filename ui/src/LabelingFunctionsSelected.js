@@ -36,25 +36,13 @@ class LabelingFunctions extends React.Component {
         super(props);
 
         this.state = {
-            // if a session starts with a labelling function already defined (for dev mode),
-            // the asynchronous calls to get these dicts will likely be too slow 
-            // and throw an error. Adding them explicitly for development.
-            connective: {"AND": 0,"OR": 1},
-            keyType: {"CONCEPT": 1, "NER": 2, "TOKEN": 0},
             order: 'asc',
-            orderBy: "Weight"
+            orderBy: "ID"
         };
     }
 
     componentDidMount() {
         this.props.getLFstats();
-    }
-
-    connective(lf) {
-        return (
-            Object.keys(this.props.connective)
-                .filter(c => this.state.connective[c] === lf.Connective)[0]
-        );
     }
 
     label(lf) {
@@ -64,16 +52,12 @@ class LabelingFunctions extends React.Component {
         );
     }
 
-    keyType(code) {
-        return (
-            Object.keys(this.props.keyType)
-                .filter(c => this.state.keyType[c] === code)[0]
-        );    
-    }
-
     conditionToString(condition) {
-        let string = Object.keys(condition)[0];
-        const keyType = this.keyType(condition[string]);
+        let string = condition["string"];
+        if (condition["case_sensitive"]) {
+            string = "<b>"+string+"</b>";
+        }
+        const keyType = condition["TYPE_"];
         if (condition[string] === 0){
             return "\"" + string + "\""
         }
@@ -84,30 +68,33 @@ class LabelingFunctions extends React.Component {
         const conditions = lf.Conditions.map(cond => this.conditionToString(cond));
         if (conditions.length > 1) {
             return (
-                conditions.join(" " + this.connective(lf) + " ")
+                conditions.join(" " + lf.CONNECTIVE_ + " ")
             );
         } 
         return conditions.join('');
     }
 
     LFtoStrings(key, lf) {
-/*        let strings = ["IF text contains "];
-        strings.push(this.conditions(lf));
-        if (lf.Direction){
-            strings.push(", in that order,")
-        }
-        strings.push(" THEN label == " + this.label(lf));
-        strings.push(" with weight " + lf.Weight);
-        return strings;*/
+        let warning = this.duplicateCell(lf.Duplicate);
 
-        const strings = {
-            ...lf,
+        const ACC_THRESHOLD = 0.3;
+        if (lf["Emp. Acc."] < ACC_THRESHOLD) {
+            console.log(lf);
+            if (lf['Incorrect'] > 0) {
+                warning = <Tooltip title={"low accuracy"}><WarningIcon color={"error"}/></Tooltip>
+            }
+        }
+        const stringsDict = {
+            //active: lf.active,
             id: key,
             conditions: this.conditions(lf),
+            context: lf.CONTEXT_,
             label: this.label(lf),
-            order: lf.Direction.toString()
-        }
-        return strings
+            order: lf.Direction.toString(),
+            weight: lf.Weight,
+            warning: warning
+        };
+        return {...lf, ...stringsDict};
     }
 
     duplicateCell(dupeString) {
@@ -121,13 +108,13 @@ class LabelingFunctions extends React.Component {
 
     render() {
 
-        const headCells = [
-          { id: 'conditions', numeric: false, disablePadding: false, label: 'Conditions' },
-          //{ id: 'order', numeric: false, disablePadding: true, label: 'In Order' },
+        var headCells = [
+          { id: 'ID', numeric: false, disablePadding: true, label: 'T' },
+          { id: 'conditions', numeric: false, disablePadding: true, label: 'Conditions' },
           { id: 'label', numeric: false, disablePadding: true, label: 'Label' },
-          { id: 'dev_set_accuracy', numeric: true, disablePadding: true, label: 'Est. Accuracy' },
-          { id: 'Coverage', numeric: true, disablePadding: true, label: 'Coverage' },
-          { id: 'Conflicts', numeric: true, disablePadding: true, label: 'Conflicts' },
+          { id: 'Emp. Acc.', numeric: true, disablePadding: true, label: 'Est. Accuracy' },
+          { id: 'Coverage Training', numeric: true, disablePadding: true, label: 'Train. Coverage' },
+          { id: 'Conflicts Training', numeric: true, disablePadding: true, label: 'Train. Conflicts' },
         ];
 
         const { classes } = this.props;
@@ -139,44 +126,56 @@ class LabelingFunctions extends React.Component {
             });
         };
 
+        //if (this.state.orderBy === "ID") {
+        //    if (this.state.order === 'asc') {
+        //        headCells[0]["label"] = "Oldest"
+        //    } else {
+        //        headCells[0]["label"] = "Newest"
+        //    }
+        //}
+
         const order = this.state.order;
         const orderBy = this.state.orderBy;
 
         var LFList = Object.keys(this.props.labelingFunctions).map(lf_key => this.LFtoStrings(lf_key, this.props.labelingFunctions[lf_key]));
         const inactive = LFList.filter(LF => !LF.active);
         LFList = LFList.filter(LF => LF.active);
-        let any_dupes = false;
-        if (LFList.some(lf => lf["Duplicate"])) {
-            any_dupes = true;
-            headCells.push({ id: 'Duplicate', numeric: false, disablePadding: true, label: 'Duplicate' },
-)
+
+        // Check if there are any LF warnings
+        let any_warnings = false;
+        if (LFList.some(lf => lf["warning"])) {
+            any_warnings = true;
+            headCells.push({ id: 'Warning', numeric: false, disablePadding: true, label: 'Warning' })
         }
 
+        let any_context = false;
+        if (LFList.some(lf => lf["context"])) {
+            any_context = true;
+            headCells.splice(2, 0, { id: 'CONTEXT_', numeric: false, disablePadding: true, label: 'Context'});
+        }
+        
         return(
           <Paper className={classes.paper}>
             <Typography className={classes.title} variant="h6" id="tableTitle">
                 Selected Labeling Functions ({LFList.length}) 
             </Typography>
-            {any_dupes ? <Typography color="error"><WarningIcon/><br/>Some of your functions have duplicate labeling signatures. Consider deleting the indicated functions.</Typography> : ""}
+            {any_warnings ? <Typography color="error"><WarningIcon/>Some of your functions have duplicate labeling signatures or low accuracy. Consider deleting the indicated functions.</Typography> : ""}
             {this.props.pending ? <LinearProgress/> : <Divider/>}
             <Table size="small" aria-label="Selected labeling functions table">
               <TableHead>
                   <TableRow>
-                      <TableCell></TableCell>
-
                     {headCells.map(headCell => (
+
                       <TableCell
                         key={headCell.id}
-                        align='right'
+                        align={headCell.numeric ? 'right' : 'left'}
                         padding="none"
                         sortDirection={orderBy === headCell.id ? order : false}
-                      >
-                        <TableSortLabel
+                      ><TableSortLabel
                           active={orderBy === headCell.id}
                           direction={order}
                           onClick={createSortHandler(headCell.id)}
-                        >
-                          {headCell.label}
+                        >{headCell.label}
                           {orderBy === headCell.id ? (
                             <span className={classes.visuallyHidden}>
                               {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -184,6 +183,7 @@ class LabelingFunctions extends React.Component {
                           ) : null}
                         </TableSortLabel>
                       </TableCell>
+
                     ))}
                     <TableCell></TableCell>
                   </TableRow>
@@ -193,16 +193,19 @@ class LabelingFunctions extends React.Component {
                 {stableSort(LFList, getSorting(order, orderBy))
                     .map(row => (
                   <TableRow key={row.id}>
-                    <TableCell><LFPanel {...this.props} lf={row}/></TableCell>
-                    <TableCell>{row.conditions}</TableCell>
-                    {/*<TableCell>{row.order}</TableCell>*/}
+                    <TableCell padding="none"><LFPanel {...this.props} lf={row}/></TableCell>
+                    <TableCell padding="none">{row.conditions}</TableCell>
+                    {any_context ? <TableCell align="right" padding="none">{row.context}</TableCell> : null }
                     <TableCell>{row.label}</TableCell>
-                    <TableCell align="right">{"dev_set_accuracy" in row    ? style(row.dev_set_accuracy)    : "..."}</TableCell> 
-                    <TableCell align="right">{"Coverage" in row  ? style(row.Coverage)  : "..."}</TableCell> 
-                    <TableCell align="right">{"Conflicts" in row ? style(row.Conflicts) : "..."}</TableCell> 
-                    {any_dupes ? <TableCell align="right">{this.duplicateCell(row.Duplicate)}</TableCell> : ""}                     
-                    <TableCell><IconButton onClick={() => this.props.deleteLF([row.id])} size="small"><ClearIcon/></IconButton></TableCell>
-
+                    <TableCell padding="none" align="right">{"Emp. Acc." in row ? (style(row["Emp. Acc."])) : ("...")}</TableCell> 
+                    <TableCell padding="none" align="right">{"Coverage Training" in row ? (style(row["Coverage Training"])) : ("...")}</TableCell> 
+                    <TableCell  padding="none"align="right">{"Conflicts Training" in row ? (style(row["Conflicts Training"])) : ("...")}</TableCell> 
+                    {any_warnings ? (<TableCell align="right">{row["warning"]}</TableCell>) : null}                     
+                    <TableCell padding="none">
+                        <IconButton onClick={() => this.props.deleteLF([row.id])} size="small">
+                            <ClearIcon/>
+                        </IconButton>
+                    </TableCell>
                   </TableRow>
                 ))}
             </TableBody>
@@ -213,15 +216,16 @@ class LabelingFunctions extends React.Component {
             <FadedTableBody>
                {inactive.map(row => (
                   <TableRow key={row.id}>
-                    <TableCell>{/*<LFPanel {...this.props} lf={row}/>*/}</TableCell>
-                    <TableCell>{row.conditions}</TableCell>
-                    {/*<TableCell>{row.order}</TableCell>*/}
-                    <TableCell>{row.label}</TableCell>
+                    <TableCell padding="none"></TableCell>
+                    <TableCell padding="none">{row.conditions}</TableCell>
+                    {any_context ? <TableCell/>: null}
+                    <TableCell padding="none">{row.label}</TableCell>
                     <TableCell align="right">{"dev_set_accuracy" in row    ? style(row.dev_set_accuracy)    : "..."}</TableCell> 
                     <TableCell align="right">{"Coverage" in row  ? style(row.Coverage)  : "..."}</TableCell> 
                     <TableCell align="right">{"Conflicts" in row ? style(row.Conflicts) : "..."}</TableCell> 
+                    {any_warnings ? <TableCell/>: null}
                     <TableCell><IconButton onClick={
-                        () => this.props.submitLFs({[row.id]: row})
+                        () => this.props.submitLFs({[row.id]: this.props.labelingFunctions[row.id]})
                     } size="small"><PublishIcon/></IconButton></TableCell>
                   </TableRow>
                 ))}
@@ -238,8 +242,6 @@ function mapStateToProps(state) {
         labelingFunctions: state.selectedLF.data,
         pending: state.selectedLF.pending,
         labelClasses: state.labelClasses.data,
-        connective: state.gll.connective,
-        keyType: state.gll.keyType,
         stats: state.selectedLF.stats //to force update when statistics come in
     };
 }

@@ -17,9 +17,21 @@ import { style } from './SortingTableUtils'
 
 class StatisticsPane extends React.Component {
     componentDidUpdate(prevProps, prevState) {
-      if ((prevProps.statistics !== this.props.statistics) && (Object.keys(prevProps.statistics).length > 0)) {
-        this.setState({prevStats: prevProps.statistics});
+      if (Object.keys(prevProps.statistics).length > 0) {
+        if (!this.statsSame(prevProps.statistics, this.props.statistics)) {
+          this.setState({prevStats: prevProps.statistics});
+        }
       }
+    }
+
+    statsSame(oldStats, newStats) {
+      const stat_list = Object.keys(oldStats);
+      for (var i = stat_list.length - 1; i >= 0; i--) {
+        let stat_key = stat_list[i];
+        if (oldStats[stat_key] !== newStats[stat_key]) {
+          return false;
+        }
+      } return true;
     }
 
     statDelta(key) {

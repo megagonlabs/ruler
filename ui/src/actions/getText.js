@@ -1,22 +1,23 @@
 import axios from 'axios';
 import api from './api'
-import { annotate, select_link } from './annotate'
-import { reset_label } from "./labelAndSuggestLF";
+import { annotate, select_link, NER } from './annotate'
+import { reset_label, label } from "./labelAndSuggestLF";
 
 export const GET_TEXT_PENDING = "GET_TEXT_PENDING";
 export const GET_TEXT_SUCCESS = 'GET_TEXT_SUCCESS';
 export const GET_TEXT_ERROR = "GET_TEXT_ERROR";
 
-function getTextPending() {
+export function getTextPending() {
     return {
         type: GET_TEXT_PENDING,
     }
 }
 
-function newText(data){
+function newText(data, index){
    return {
         type: GET_TEXT_SUCCESS, 
-        data
+        data,
+        index
     }
 }
 
@@ -35,7 +36,7 @@ export function getText(){
             if (response.error) {
                 throw(response.error);
             }
-            _getTextHelper(response, dispatch);
+            setInteraction(response, dispatch);
             return response.data.text
         })
         .catch(error => {
@@ -45,9 +46,9 @@ export function getText(){
 }
 
 // Set the new text, and reset all state related to the previous text
-function _getTextHelper(response, dispatch){
+export function setInteraction(response, dispatch){
     //change the text
-    dispatch(newText(response.data.text));
+    dispatch(newText(response.data.text, response.data.index));
 
     //reset annotations
     let annotations = [];
@@ -55,10 +56,20 @@ function _getTextHelper(response, dispatch){
         annotations = response.data.annotations;
     }
     dispatch(annotate(annotations));
+    let ners = [];
+    if ("NER" in response.data) {
+        ners = response.data.NER;
+    }
+    dispatch(NER(ners));
 
     //reset selected span to link
     dispatch(select_link({type: null}));
 
-    //reset selected label
-    dispatch(reset_label());
+    if ("label" in response.data) {
+        dispatch(label(response.data));
+    } else {
+        //reset selected label
+        dispatch(reset_label());
+    }
+
 }

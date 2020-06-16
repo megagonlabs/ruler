@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Ruler",
+  "name": "Ruler: Data Programming by Demonstration for Text",
   "icons": [
     {
       "src": "favicon.png",

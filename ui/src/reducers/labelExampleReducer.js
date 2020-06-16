@@ -1,8 +1,6 @@
 import { LF_LABEL_EXAMPLES } from '../actions/submitLFs'
 
 const initialState = {
-	"examples": [],
-	"mistakes": []
 }
 
 export default function labelExamples(state=initialState, action) {

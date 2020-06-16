@@ -54,8 +54,8 @@ function Footer(props) {
 
     return (
         <Toolbar className={clsx(classes.root, classes.footer, { [classes.footerShift]: isDrawerOpen })} color={'primary'}>
-            <IconButton className={classes.menuButton} >
-                <FavoriteIcon className={classes.icon}/>
+            <IconButton edge="end" className={classes.menuButton} onClick={handleClick.bind(null,'https://github.com/rulerauthors/ruler')} >
+                <GithubIcon/>
             </IconButton>
         </Toolbar>
     );

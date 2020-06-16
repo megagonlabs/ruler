@@ -21,6 +21,8 @@ export default class Link extends React.Component {
             width: 0,
             height: 0
         };
+
+        this.updateDimensions = this.updateDimensions.bind(this);
     }
 
     componentDidMount() {
@@ -35,7 +37,7 @@ export default class Link extends React.Component {
         return document.getElementById(id);
     }
 
-    updateDimensions = () => {
+    updateDimensions() {
         this.setState({ width: window.innerWidth, height: window.innerHeight });
     }
 

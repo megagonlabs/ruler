@@ -16,7 +16,20 @@ export function label (state = null, action ) {
 export function suggestedLF (state = {}, action) {
     switch (action.type) {
         case NEW_LF:
-            return action.data;
+            /* Keep already selected LFs */
+            const LF_names = Object.keys(state);
+            var already_selected_lfs = {};
+            for (var i = LF_names.length - 1; i >= 0; i--) { 
+                let lf_id = LF_names[i];               
+                let lf = state[lf_id];
+                if (lf.selected) {
+                    already_selected_lfs[lf_id] = lf
+                }
+            }
+            return {
+                ...action.data,
+                ...already_selected_lfs
+                };
         default:
             return state;
     }

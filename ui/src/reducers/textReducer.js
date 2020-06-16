@@ -21,6 +21,7 @@ function text (state =initialState, action ){
         return {
             ...state,
             data: action.data,
+            index: action.index,
             pending: false
         } 
         case GET_TEXT_ERROR:

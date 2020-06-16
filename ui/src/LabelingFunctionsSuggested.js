@@ -16,13 +16,10 @@ import WarningIcon from '@material-ui/icons/Warning';
 
 import { set_selected_LF } from './actions/labelAndSuggestLF'
 
-class SuggestedLabelingFunctions extends React.Component {
+class LabelingFunctionsSuggested extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            // if a session starts with a labelling function already defined (for dev mode),
-            // the asynchronous calls to get these dicts will likely be too slow 
-            // and throw an error. Adding them explicitly for development.
             all_selected: false
         };
 
@@ -40,13 +37,6 @@ class SuggestedLabelingFunctions extends React.Component {
         }
     }
 
-    connective(lf) {
-        return (
-            Object.keys(this.props.connective)
-                .filter(c => this.props.connective[c] === lf.Connective)[0]
-        );
-    }
-
     label(lf) {
         return (
             this.props.labelClasses
@@ -54,27 +44,22 @@ class SuggestedLabelingFunctions extends React.Component {
         );    
     }
 
-    keyType(code) {
-        return (
-            Object.keys(this.props.keyType)
-                .filter(c => this.props.keyType[c] === code)[0]
-        );    
-    }
-
     conditionToString(condition) {
-        let string = Object.keys(condition)[0];
-        const keyType = this.keyType(condition[string]);
-        if (condition[string] === 0){
+        let string = condition["string"];
+        if (condition["case_sensitive"]) {
+            string = "<b>"+string+"</b>";
+        }
+        if (condition.type === this.props.keyType["TOKEN"]){
             return "\"" + string + "\""
         }
-        return string + " (" + keyType + ")";
+        return string + " (" + condition.TYPE_ + ")";
     }
 
     conditions(lf) {
         const conditions = lf.Conditions.map(cond => this.conditionToString(cond));
         if (conditions.length > 1) {
             return (
-                conditions.join(" " + this.connective(lf) + " ")
+                conditions.join(" " + lf.CONNECTIVE_ + " ")
             );
         } 
         return conditions.join('');
@@ -84,6 +69,7 @@ class SuggestedLabelingFunctions extends React.Component {
         const stringsDict = {
             id: key,
             conditions: this.conditions(lf),
+            context: lf.CONTEXT_,
             label: this.label(lf),
             order: lf.Direction.toString(),
             weight: lf.Weight
@@ -118,7 +104,15 @@ class SuggestedLabelingFunctions extends React.Component {
 
     render() {
         const classes = this.props.classes;
-        const LFList = Object.keys(this.props.labelingFunctions).map(lf_key => this.LFtoStrings(lf_key, this.props.labelingFunctions[lf_key]));
+
+        var show_context = false;
+        const LFList = Object.keys(this.props.labelingFunctions).map((lf_key) => {
+            var lf_dict = this.LFtoStrings(lf_key, this.props.labelingFunctions[lf_key])
+            if (lf_dict.context) {
+                show_context = true;
+            }
+            return lf_dict;
+        });
 
         var LF_content = <Table size="small" aria-label="suggested labeling functions table">
               <TableHead>
@@ -131,6 +125,7 @@ class SuggestedLabelingFunctions extends React.Component {
                     { this.state.all_selected ? "Deselect All" : "Select All"}
                   </TableCell>
                   <TableCell align="right">Conditions</TableCell>
+                  { show_context ? <TableCell align="right">Context</TableCell> : null}                  
                   <TableCell align="right">Assign Label</TableCell>
                 </TableRow>
               </TableHead>
@@ -144,6 +139,7 @@ class SuggestedLabelingFunctions extends React.Component {
                         checked={this.props.labelingFunctions[row.id].selected===true}/>
                     </TableCell>
                     <TableCell align="right">{row.conditions}</TableCell>
+                    { show_context ? <TableCell align="right">{row.context}</TableCell> : null}
                     {/*<TableCell align="right">{row.order}</TableCell>*/}
                     <TableCell align="right">{row.label}</TableCell>
                   </TableRow>
@@ -164,7 +160,7 @@ class SuggestedLabelingFunctions extends React.Component {
     }
 }
 
-SuggestedLabelingFunctions.propTypes = {
+LabelingFunctionsSuggested.propTypes = {
     all_selected: PropTypes.bool
 };
 
@@ -173,10 +169,9 @@ function mapStateToProps(state, ownProps?) {
     return { 
         labelingFunctions: state.suggestedLF,
         labelClasses:state.labelClasses.data, 
-        connective: state.gll.connective,
-        keyType: state.gll.keyType,
         no_annotations: (state.annotations.length < 1),
         no_label: (state.label === null),
+        keyType: state.gll.keyType
     };
 }
 
@@ -186,4 +181,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SuggestedLabelingFunctions);
+export default connect(mapStateToProps, mapDispatchToProps)(LabelingFunctionsSuggested);

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
 import {connect} from "react-redux";
 
-import { annotate, select_link } from './actions/annotate'
+import { annotate, select_link, TokenToRegex } from './actions/annotate'
 import { conceptEditors, select_concept } from './actions/concepts'
 import AnnotationDisplay from './AnnotationDisplay'
 import ConceptCollection from "./ConceptCollection";
@@ -17,7 +17,6 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import ClearIcon from '@material-ui/icons/Clear';
-import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
 import { withTheme } from '@material-ui/core/styles'; // we use theme to pass color to svg elements
@@ -42,7 +41,6 @@ class AnnotationBuilder extends React.Component {
         };
 
         this.clickSegment = this.clickSegment.bind(this);
-
     }
 
     componentDidUpdate(nextProps) {
@@ -51,17 +49,57 @@ class AnnotationBuilder extends React.Component {
         }
     }
 
+    annotationFilteredString(root) {
+        // iterate through the selected range to get a string representation
+        // ignore annotation tags (these are meta-data and not part of the text to annotate)
+        var _iterator = document.createTreeWalker(
+            root,
+            NodeFilter.SHOW_ALL,
+            {
+                acceptNode: function (node) {
+                    if ((node.id==="annotation") || (node.parentNode.id==="annotation")) {
+                        return NodeFilter.FILTER_REJECT;
+                    } if (node.nodeType===3) {
+                        return NodeFilter.FILTER_ACCEPT;
+                    } else { 
+                        return NodeFilter.FILTER_SKIP; 
+                    }
+                }
+            }
+        );
+
+        var selection_string = ""
+        var currentNode = _iterator.nextNode();
+        while (currentNode) {
+            selection_string += currentNode.textContent;
+            currentNode = _iterator.nextNode()
+        }
+        return (selection_string)
+    }
+
     setSelectedRange() {
         let start;
         let end;
         var sel = window.getSelection && window.getSelection();
+
         if (sel && sel.rangeCount > 0) {
-            const range = window.getSelection().getRangeAt(0);
+            const range = window.getSelection().getRangeAt(0)
+            // IT'S A TRAP: user is trying to highlight an annotation node!
+            if (range.startContainer.parentNode && range.startContainer.parentNode.id === "annotation") {
+                return (false);
+            } else if (range.endContainer.parentNode && range.endContainer.parentNode.id === "annotation") {
+                return (false);
+            }
+            // string containing the selected text
+            const selection_str = this.annotationFilteredString(range.cloneContents());
+
             const preSelectionRange = range.cloneRange();
             preSelectionRange.selectNodeContents(this.elRef.current);
             preSelectionRange.setEnd(range.startContainer, range.startOffset);
-            start = [...preSelectionRange.toString()].length;
-            end = start + [...range.toString()].length;
+            // string containing any text before the selection start
+            const pre_sel_str = this.annotationFilteredString(preSelectionRange.cloneContents());
+            start = pre_sel_str.length;
+            end = start + selection_str.length;
         }
 
         // trim whitespace from selection
@@ -157,11 +195,21 @@ class AnnotationBuilder extends React.Component {
     addToConcept(segment) {
         if (this.props.selectedLink.type===null){
             const conceptName = this.props.selectedConcept;
+
+            const view = this.conceptsRef.state.view;
+
             let tokens = this.props.concepts[conceptName].tokens;
-            let new_span = segment.text.trim();
-            if (new_span !== "" && !(new_span in tokens)){
-                tokens[segment.text] = 0; //TODO no magic number
-                this.props.conceptEditors.updateConcept(conceptName, tokens); 
+            let text = this.props.text.slice(segment.start_offset, segment.end_offset)
+            let new_span = text.trim();
+            if (new_span !== "") {
+                if (view===0) {
+                    new_span = TokenToRegex(new_span);
+                }
+                const new_token = {string: new_span, type: view, case_sensitive: false}
+                if (!(new_token in tokens)){
+                    tokens.push(new_token);
+                    this.props.conceptEditors.updateConcept(conceptName, tokens); 
+                }
             }
         }
     }
@@ -238,11 +286,6 @@ class AnnotationBuilder extends React.Component {
     }
 
     clickSegment(segment) {
-        if (this.props.selectedConcept !== null) {
-            // TODO may want to do one not both
-            this.assignToConcept(segment);
-            this.addToConcept(segment);
-        }
         if (this.props.selectedLink.type !== null) {
             this.addLink(segment);
         }
@@ -269,29 +312,35 @@ class AnnotationBuilder extends React.Component {
                 <Grid item>
                         <Card className={classes.card} xs={12}>
                             <CardContent >
-                                <ConceptCollection classes={classes} addAnnotations={this.updatePositions.bind(this)} shouldStatsUpdate={this.props.shouldStatsUpdate}/>
-                                <Divider variant="middle" />
-                                <br/>
-                                <Grid container direction="row" justify="flex-end">
-                                    <Tooltip title="Clear all annotations" enterDelay={500}>
-                                        <Button onClick={this.clearAllAnnotations.bind(this)}>
-                                            <ClearIcon/>
-                                        </Button>
-                                    </Tooltip>
-                                </Grid>
-                                <Box>
-                                    <AnnotationDisplay 
-                                        classes={classes} 
-                                        onMouseUp={this.setSelectedRange.bind(this)} 
-                                        textAreaRef={this.elRef}
-                                        annotations={annotations}
-                                        highlights={this.props.highlights}
-                                        text={this.props.text}
-                                        clickSegment={this.clickSegment.bind(this)}
-                                        clickLinkButton={this.clickLinkButton.bind(this)}
-                                        onDelete={this.removeAnnotation.bind(this)}
-                                        />
-                                </Box>
+                                <Grid container direction="row" alignItems="baseline" className={classes.grid} spacing={6}>
+                                    <Grid item s={3} xs={4}>
+                                        <ConceptCollection childRef={(ref) => (this.conceptsRef = ref)} classes={classes} addAnnotations={this.updatePositions.bind(this)}/>
+                                    </Grid>
+                                    <Grid container item direction="column" s={9} xs={8} spacing={6}>
+                                        <Grid container direction="row" justify="flex-end">
+                                            <Tooltip title="Clear all annotations" enterDelay={500}>
+                                                <Button onClick={this.clearAllAnnotations.bind(this)}>
+                                                    <ClearIcon/>
+                                                </Button>
+                                            </Tooltip>
+                                        </Grid>
+                                        <Grid item>
+                                        <Box>
+                                            <AnnotationDisplay 
+                                                classes={classes} 
+                                                onMouseUp={this.setSelectedRange.bind(this)} 
+                                                textAreaRef={this.elRef}
+                                                annotations={annotations}
+                                                highlights={this.props.highlights}
+                                                ners={this.props.ners}
+                                                text={this.props.text}
+                                                clickSegment={this.clickSegment.bind(this)}
+                                                clickLinkButton={this.clickLinkButton.bind(this)}
+                                                onDelete={this.removeAnnotation.bind(this)}
+                                                />
+                                        </Box></Grid>
+                                    </Grid>
+                                </Grid> 
                             </CardContent>
                             <CardActions className={classes.cardActions}>
                                 <Grid container direction="row" justify="space-evenly" alignItems="flex-end">
@@ -324,6 +373,7 @@ function mapStateToProps(state, ownProps?) {
         concepts: state.concepts.data, 
         entityPositions: state.annotations, 
         highlights: state.highlights.data,
+        ners: state.ners,
         label: state.label,
         selectedConcept: state.selectedConcept,
         selectedLink: state.selectedLink

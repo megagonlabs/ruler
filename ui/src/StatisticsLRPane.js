@@ -39,36 +39,29 @@ class LRStatisticsPane extends React.Component {
     }
 
     render(){
-        var class_0_stats = Object.keys(this.props.statistics).filter(s => s.endsWith("_0"))
-        var class_1_stats = Object.keys(this.props.statistics).filter(s => s.endsWith("_1"))
-
         const classes = this.props.classes;
         const prevStats = ((this.state) && ("prevStats" in this.state));
         return(
           <Paper className={classes.paper}>
-            <RefreshIcon onClick={this.props.getLRStatistics} disabled={this.props.pending}></RefreshIcon>
+            
             <Typography className={classes.title} variant="h6" id="tableTitle">
-                Trained Model Statistics
+                <RefreshIcon onClick={this.props.getLRStatistics} disabled={this.props.pending}></RefreshIcon>Trained Model Statistics
             </Typography>
-            <Typography variant="body1">Train a logistic regression model with bag-of-words features on your training set to get an idea of the quality.</Typography>
+            <Typography variant="body1">Train a logistic regression model with bag-of-words features on your training set.</Typography>
 
             {this.props.pending ? <LinearProgress/> : <Divider/>}
 
             <Table stickyHeader className={classes.table} size="small" aria-label="labeling statistics">
               <TableBody>
-              
-                {["accuracy", "micro_f1"].map(key =>
-                    { if (key in this.props.statistics) {
+                {["accuracy", "micro_f1"].map(key => { 
+                  if (key in this.props.statistics) {
                       return (<TableRow key={key}>
                           <TableCell>{key}</TableCell>
                           <TableCell align="right">{style(this.props.statistics[key])}</TableCell>
-                          { this.statDelta(key) }
+                          {this.statDelta(key)}
                         </TableRow>)
-                    } return ""
-                  }        
-                )}
-                
-                </TableBody>
+                  } else { return null}
+                })}</TableBody>
                 </Table>
             <br/>
             <Typography className={classes.title} variant="h6" id="tableTitle">
@@ -76,23 +69,25 @@ class LRStatisticsPane extends React.Component {
             </Typography>
                 <Table>
                 <TableBody>
-                <TableRow key="class_headers">
-                  <TableCell><Typography variant="h6"> Class 0</Typography></TableCell><TableCell></TableCell>
-                  {prevStats ? <TableCell/> : ""}<TableCell><Typography variant="h6">Class 1</Typography></TableCell><TableCell></TableCell>
-                </TableRow>
-                {["precision", "recall"].map(key =>
-                  { if (key+"_0" in this.props.statistics) {
-                    return (<TableRow key={key}>
-                      <TableCell>{key+"_0"}</TableCell>
-                      <TableCell align="right">{style(this.props.statistics[key+"_0"])}</TableCell>
-                      { this.statDelta(key+"_0") }
-                      <TableCell>{key+"_1"}</TableCell>
-                      <TableCell align="right">{style(this.props.statistics[key+"_1"])}</TableCell>
-                      { this.statDelta(key+"_1") }
-                  </TableRow>)
-                  } return ("")
-                }
-                  )}
+                  <TableRow key="class_headers">
+                    <TableCell><Typography variant="h6">Class0</Typography></TableCell>
+                    <TableCell/>
+                    {prevStats ? (<TableCell/>) : null}
+                    <TableCell><Typography variant="h6">Class1</Typography></TableCell>
+                    <TableCell/>
+                  </TableRow>
+                  {["precision", "recall"].map(key => { 
+                    if (key+"_0" in this.props.statistics) {
+                      return (<TableRow key={key}>
+                          <TableCell>{key+"_0"}</TableCell>
+                          <TableCell align="right">{style(this.props.statistics[key+"_0"])}</TableCell>
+                          {this.statDelta(key+"_0")}
+                          <TableCell>{key+"_1"}</TableCell>
+                          <TableCell align="right">{style(this.props.statistics[key+"_1"])}</TableCell>
+                          {this.statDelta(key+"_1")}
+                        </TableRow>)
+                    } return null
+                  })}
               </TableBody>
             </Table>
           </Paper>        )
@@ -101,8 +96,8 @@ class LRStatisticsPane extends React.Component {
 
 function mapStateToProps(state, ownProps?) {
     return { 
-      statistics: state.lrstatistics.data,
-      pending: state.lrstatistics.pending
+      statistics: state.statistics_LRmodel.data,
+      pending: state.statistics_LRmodel.pending
     };
 }
 function mapDispatchToProps(dispatch) {

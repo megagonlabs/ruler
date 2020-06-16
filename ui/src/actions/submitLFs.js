@@ -104,6 +104,12 @@ export function getLFstats() {
 }
 
 export function getLFexamples(lf_id) {
+    if (lf_id === null) {
+        return dispatch => { dispatch({
+                    type: LF_LABEL_EXAMPLES, 
+                    data: {}
+                })};
+    }
     return dispatch => {
         dispatch(oneLFPending(lf_id));
         axios.get(`${api}/labelingfunctions/${lf_id}`)

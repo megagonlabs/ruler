@@ -1,4 +1,4 @@
-import { ANNOTATE, HIGHLIGHT, HIGHLIGHT_ERROR, SELECT_LINK } from '../actions/annotate';
+import { ANNOTATE, HIGHLIGHT, HIGHLIGHT_ERROR, SELECT_LINK, ADD_NER } from '../actions/annotate';
 
 function annotations(state=[], action ){
     switch (action.type) {
@@ -11,19 +11,31 @@ function annotations(state=[], action ){
 
 export default annotations;
 
-export function highlights(state={data: [], error: null}, action ){
+export function highlights(state={data: [], error: {}}, action ){
     switch (action.type) {
         case HIGHLIGHT:
             return {
                 ...state, 
                 data: action.data, 
-                error: null
+                error: {},
+                idx: null
             }
         case HIGHLIGHT_ERROR:
+            var newErr = state.error;
+            newErr[action.idx] = action.error;
             return {
-                ...state, 
-                error: action.error
+                ...state,
+                error: newErr
             }
+        default:
+            return state
+    }
+}
+
+export function ners(state=[], action) {
+    switch (action.type) {
+        case ADD_NER:
+            return action.data
         default:
             return state
     }

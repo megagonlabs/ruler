@@ -33,7 +33,7 @@ export default function statisticsReducer(state=initialState, action) {
 }
 
 
-export function lrstatistics(state=initialState, action) {
+export function statistics_LRmodel(state=initialState, action) {
     switch (action.type) {
         case GET_LRSTATS_PENDING:
             return {

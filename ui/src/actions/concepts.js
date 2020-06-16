@@ -66,7 +66,7 @@ function fetchConcepts() {
 function addConcept(conceptName){
     const data = {
         name: conceptName,
-        tokens: {}
+        tokens: []
     };
 
     return dispatch => {

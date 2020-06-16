@@ -1,5 +1,6 @@
 import axios from 'axios';
 import api from './api'
+import {setInteraction, getTextPending} from './getText'
 
 export const DELETE_INTERACTION = "DELETE_INTERACTION";
 export const GET_INTERACTION_SUCCESS = "GET_INTERACTION_SUCCESS"
@@ -38,6 +39,7 @@ export function getInteraction(index) {
         axios.get(`${api}/interaction/${index}`)
         .then(response => {
             if(response.error) {
+                dispatch(getInteractionError());
                 throw(response.error);
             }
             dispatch(getInteractionSuccess(response.data));
@@ -45,6 +47,22 @@ export function getInteraction(index) {
         })
         .catch(error => {
             dispatch(getInteractionError(error));
+        })
+    }
+}
+
+export function setAsCurrentInteraction(index) {
+    return dispatch => {
+        dispatch(getTextPending())
+        axios.get(`${api}/interaction/${index}`)
+        .then(response => {
+            if(response.error) {
+                dispatch(getInteractionError());
+                throw(response.error);
+            }
+            setInteraction(response, dispatch);
+            dispatch(getInteractionSuccess(response.data));
+            return response.data;
         })
     }
 }

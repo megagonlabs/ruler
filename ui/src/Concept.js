@@ -2,106 +2,57 @@ import React from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from "react-redux";
 
-import AddIcon from '@material-ui/icons/Add';
-import Button from '@material-ui/core/Button';
-import Chip from '@material-ui/core/Chip';
-import CloseIcon from '@material-ui/icons/Close';
+import Avatar from '@material-ui/core/Avatar';
+import Badge from '@material-ui/core/Badge';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import Collapse from '@material-ui/core/Collapse';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import IconButton from '@material-ui/core/IconButton';
-import MenuItem from '@material-ui/core/MenuItem';
-import Popover from '@material-ui/core/Popover';
-import Select from '@material-ui/core/Select';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
+import ConceptElement from './ConceptElement'
 import { conceptEditors, select_concept } from './actions/concepts'
-import { highlight_regex, highlight_string, highlight, annotate } from './actions/annotate'
+import { annotate, highlight } from './actions/annotate'
+
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
 class Concept extends React.Component {
     constructor(props) {
         super(props);
-
-        this.availableKeyTypes = {}; // create a mapping {key_code: key_name}
-        for (var i = ["TOKEN", "REGEXP"].length - 1; i >= 0; i--) {
-            let keytype_name = ["TOKEN", "REGEXP"][i];
-            this.availableKeyTypes[this.props.keyType[keytype_name]] = keytype_name;
-        }
-        const default_keytype = "TOKEN";
-
-        this.state = {
-            anchorEl: null,
-            new_token: "",
-            new_keytype: default_keytype
-        }
-        this.handleInput = this.handleInput.bind(this);
-        this.handleKeyPress = this.handleKeyPress.bind(this);
-        this.handleAdd = this.handleAdd.bind(this);
-        this.openMenu = this.openMenu.bind(this);
-        this.handleClose = this.handleClose.bind(this);
+        this.toggleOpen = this.toggleOpen.bind(this);
         this.handleRemove = this.handleRemove.bind(this);
         this.handleClick = this.handleClick.bind(this);
-        this.updateConcept = this.updateConcept.bind(this);
     } 
 
-    handleInput(event) {
-        const new_token = event.target.value;
-        this.setState({
-            new_token
-        });
-        // TODO annotate
-        if (new_token.trim().length > 0) {
-            if (this.state.new_keytype === "TOKEN") {
-                this.props.highlight_string(new_token, this.props.text);
-            } if (this.state.new_keytype === "REGEXP") {
-                this.props.highlight_regex(new_token, this.props.text);
-            }
-        } else {
-            this.resetHighlights();
-        }
-    }
-
-    canAdd(new_token) {
-        return ((new_token !== "") && !(new_token in this.props.tokens) && !(this.props.error))
-    }
-
-    handleAdd() {
-        const new_token = this.state.new_token.trim();
-        if (this.canAdd(new_token)) {
-            this.setState({
-                new_token: ""
-            })
+    changeToken(token_idx, new_token) {
+        if (this.props.tokens[token_idx] !== new_token) {
             var current_tokens = this.props.tokens;
-            current_tokens[new_token] = this.props.keyType[this.state.new_keytype];
-            this.updateConcept(current_tokens);
-            // annotate the text with the new condition, if applicable
-            const hlights = this.props.highlights.map(hlight => {
-                hlight.id = hlight.start_offset;
-                hlight.label = this.props.concept;
-                return hlight;
-            });
-            this.props.annotate(this.props.addAnnotations(hlights));
-            this.resetHighlights();            
+            current_tokens[token_idx] = new_token;
+            this.updateConcept(current_tokens);        
         }
     }
 
-    resetHighlights() {
-        this.props.highlight([]);
-    }
-
-    changeKeytype(token_to_change, new_keytype) {
+    handleRemove(old_token_idx) {
+        const old_token = this.props.tokens[old_token_idx];
         var current_tokens = this.props.tokens;
-        current_tokens[token_to_change] = this.props.keyType[new_keytype];
+        current_tokens = current_tokens.filter((elt, idx) => idx !== old_token_idx);
         this.updateConcept(current_tokens);
-        // TODO annotate text with new token/keytype
-    }
 
-    handleRemove(old_token) {
-        var current_tokens = this.props.tokens;
-        delete current_tokens[old_token];
-        this.updateConcept(current_tokens);
+        //Remove annotations that came from this element
+        var new_annotations = this.props.annotations.filter(
+            annotation => {
+                if (annotation.origin == old_token.string) {
+                    return false;
+                } return true;
+            })
+        this.props.annotate(new_annotations);
     }
 
     updateConcept(tokens) {
@@ -109,31 +60,22 @@ class Concept extends React.Component {
             this.props.concept,
             tokens
         );
-        this.props.shouldStatsUpdate(true);
-    }
-
-    handleKeyPress(event){ 
-        if (event.key === 'Enter') {
-            this.handleAdd();
-        }
     }
     
-    openMenu(event){
-        this.setState({anchorEl: event.currentTarget});
+    toggleOpen(event){
+        if (this.props.isOpen) {
+            this.props.close();
+        } else {
+            this.props.open();
+        }
     }
 
     handleClick(event){
         if (this.props.selectedConcept===this.props.concept) {
-            this.props.select_concept(null);
+            //this.props.select_concept(null);
         } else {
             this.props.select_concept(this.props.concept);
-
         }
-    }
-
-    handleClose(){
-        this.setState({anchorEl: null});
-        this.resetHighlights();
     }
 
     deleteSelf() {
@@ -147,112 +89,83 @@ class Concept extends React.Component {
         const color = this.props.color;
 
         const isSelected = (this.props.selectedConcept===this.props.concept);
-        let style = {}
-        let variant = null;
+        let style = {padding: 5, border: "2px solid " + color}
         if (isSelected) {
             style["backgroundColor"] = color;
             style["color"] = "white";
-            variant = "outlined";
         } else {
             style["backgroundColor"] = "white";
-            style["border"] = "2px solid " + color;
-            variant = "default";
+            style["color"] = "black";
         }
 
+        const new_token_idx = this.props.tokens.length;
+
         return(
-            <>
-                <Chip
-                    aria-label={concept}
-                    size="medium"
-                    className={ classes.chip }
-                    key = {concept}
-                    id = {concept}
+        <div>
+            <Card>
+                <CardHeader
                     onClick = {this.handleClick}
-                    label = { concept }
                     style = { style }
-                    variant={ variant }
-                    onDelete={this.deleteSelf.bind(this)} 
-                    avatar={
-                        <IconButton 
-                            size="small" 
-                            onClick={this.openMenu} 
-                            aria-label="edit this concept" 
-                            children=<Typography variant="button">{Object.keys(this.props.tokens).length}</Typography>
-                            color="inherit"
-                        />
+                    action={
+                        <><IconButton 
+                            aria-label="delete concept" 
+                            onClick={this.deleteSelf.bind(this)}>
+                            <DeleteForeverIcon/>
+                        </IconButton>
+                        <IconButton
+                            onClick={this.toggleOpen}
+                            aria-expanded={this.props.isOpen}
+                            aria-label="show more">
+                            {this.props.isOpen ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
+                        </IconButton> </> 
                     }
+                    title={<Typography>{concept}</Typography>}
+                    avatar={<Avatar 
+                        aria-label={concept} 
+                        className={classes.avatar} size="small"  >
+                            {new_token_idx}
+                    </Avatar>}
                 />
-                <Popover 
-                    open={Boolean(this.state.anchorEl)}
-                    anchorEl={this.state.anchorEl}
-                    onClose={this.handleClose}
-                    anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                    }}
-                    transformOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                    }}
-                >
-                    <Table><TableBody>
-                    {Object.keys(this.props.tokens).map((str) => {
-                        var keytype = this.availableKeyTypes[this.props.tokens[str]];
-                        return (
-                        <TableRow key={str}>
-                            <TableCell><Typography variant="h6">{str}</Typography></TableCell>
-                            <TableCell><Select
-                                value={keytype}
-                                onChange={(event) => this.changeKeytype(str, event.target.value)}>
-                                {Object.values(this.availableKeyTypes).map((ktype) => 
-                                    <MenuItem key={ktype} value={ktype}>{ktype}</MenuItem>
-                                )}
-                            </Select></TableCell>
-                            <TableCell><Button  
-                                className={classes.button} size="small" 
-                                color="primary" 
-                                aria-label="add" >
-                                <CloseIcon onClick={() => this.handleRemove(str)}/>
-                            </Button></TableCell>
+                <Collapse in={this.props.isOpen} timeout="auto" unmountOnExit>
+                    <Table size="small" stickyHeader>
+                        <TableHead>
+                        <TableRow>
+                            <TableCell>value</TableCell>
+                            {this.props.view ? null : <TableCell>type</TableCell>}
+                            <TableCell>case</TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
-                        )
+                        </TableHead>
+                        <TableBody>
+                    {this.props.tokens.map((token, idx) => {
+                        let key = token.string + String(token.type) + String(token.case_sensitive) + String(idx);
+                        return (<ConceptElement 
+                                    token={token}
+                                    delete={() => this.handleRemove(idx)}
+                                    changeToken={(new_token) => this.changeToken(idx, new_token)} 
+                                    key={key}
+                                    idx={idx}
+                                    concept={concept}
+                                    addAnnotations={this.props.addAnnotations}
+                                    classes={classes}
+                                    view={this.props.view}
+                                />)
                     })}
-                        <TableRow key="inputField">
-                            
-                            <TableCell><TextField 
-                                className={classes.input}
-                                placeholder = "new string"
-                                onKeyPress = {this.handleKeyPress} 
-                                value={this.state.new_token}
-                                onChange = {this.handleInput}
-                                error={(this.props.error !== null)}
-                                helperText={this.props.error}>
-                            </TextField></TableCell>
-                            <TableCell><Select
-                                value={this.state.new_keytype}
-                                onChange={(event) => {
-                                    this.setState({
-                                        new_keytype: event.target.value
-                                    })
-                                }}>
-                                {Object.values(this.availableKeyTypes).map((ktype) => 
-                                    <MenuItem key={ktype} value={ktype}>{ktype}</MenuItem>
-                                )}
-                            </Select></TableCell>                            
-                            <TableCell><Button 
-                                onClick={this.handleAdd}
-                                className={classes.button} 
-                                size="small" 
-                                color="primary" 
-                                aria-label="add" 
-                                disabled={!(this.canAdd(this.state.new_token.trim()))}>
-                                <AddIcon />
-                            </Button></TableCell>  
-                                         
-                        </TableRow>
+                    <ConceptElement 
+                        token={{string: "", token_text: ""}}
+                        changeToken={(new_token) => this.changeToken(new_token_idx, new_token)} 
+                        key={new_token_idx}
+                        idx={new_token_idx}
+                        classes={classes}
+                        concept={concept}
+                        view={this.props.view}
+                        addAnnotations={this.props.addAnnotations}
+                        new_entry={true}
+                    />
                     </TableBody></Table>
-                </Popover>
-            </>
+                </Collapse>
+            </Card>
+        </div>
         );
     }
 }
@@ -262,21 +175,19 @@ function mapStateToProps(state, ownProps?) {
     return { 
         ...concept,
         selectedConcept: state.selectedConcept,
-        keyType: state.gll.keyType,
         text: state.text.data,
         error: state.highlights.error,
-        highlights: state.highlights.data
+        highlights: state.highlights.data,
+        annotations: state.annotations
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return { 
         annotate: bindActionCreators(annotate, dispatch), 
-        highlight: bindActionCreators(highlight, dispatch),
-        highlight_regex: bindActionCreators(highlight_regex, dispatch),
-        highlight_string: bindActionCreators(highlight_string, dispatch),
         conceptEditors: bindActionCreators(conceptEditors, dispatch), 
-        select_concept: bindActionCreators(select_concept, dispatch)
+        select_concept: bindActionCreators(select_concept, dispatch),
+        highlight: bindActionCreators(highlight, dispatch)
     };
 }
 
