@@ -1,9 +1,14 @@
 import json
 import numpy as np
 import os
+import pandas as pd
 import pickle
 import sys
 
+from datetime import datetime
+from importlib import import_module
+from importlib import invalidate_caches
+from importlib import reload
 from math import log
 from sklearn import metrics
 from sklearn.feature_extraction.text import CountVectorizer
@@ -12,245 +17,444 @@ from snorkel.labeling import LabelModel
 from snorkel.labeling import PandasLFApplier
 from snorkel.labeling import filter_unlabeled_dataframe
 from snorkel.utils import preds_to_probs
+from synthesizer.gll import CONCEPT
+from synthesizer.gll import CONDS
+from synthesizer.gll import KeyType
 
-from synthesizer.gll import *
-from verifier.util import *
 
+from verifier.labeling_function import LabelingFunction
 
 class Modeler:
-    def __init__(self, df_train, df_dev, df_valid, df_test, df_heldout, lfs={}, label_model=None):
+    """Used to fit, predict, apply, 
+    and stores metadata related to labeling functions.
+    
+    Attributes:
+        cardinality (int): Number of label classes 
+        label_model (Snorkel LabelModel): Model that combines labels from different functions. 
+            you can pass your own LabelModel to iterate on or create a new one with Ruler.
+        lf_db (LF_DB): A database of labeling functions.
+    """
+    
+    def __init__(self, lf_db=None, label_model=None, cardinality: int=2):
+            """
+            Args:
+                lf_db (LF_DB, optional): A database of labeling functions.
+                label_model (Snorkel LabelModel, optional): Model that combines labels from different functions. 
+                    you can pass your own LabelModel to iterate on or create a new one with Ruler.
+                cardinality (int, optional): Number of label classes 
+            """
+            if lf_db is None:
+                self.lf_db = LFDB({})
+                assert len(self.get_lfs())==0, self.get_lfs()
+            else:
+                self.lf_db = lf_db
+
+            self.cardinality = cardinality
+
+            if label_model is None:
+                self.label_model = LabelModel(cardinality=self.cardinality, verbose=True)
+            else: 
+                self.label_model = label_model
+                assert self.cardinality == label_model.cardinality
+
+    def __getitem__(self, lf_id):
+        """
+        Returns:
+            LabelingFunction: see labeling_function.py for specs
+        """
+        return self.lf_db[lf_id]
+
+    def get_lfs(self, include_inactive=False):
+        """Get all labeling functions. If include_inactive=False, do not include deactivated LFs.
         
-        df_train["seen"] = 0
-        self.df_train = df_train.reset_index()
-        self.df_dev = df_dev
-        self.df_valid = df_valid
-        self.df_test = df_test
-        self.df_heldout = df_heldout
+        Args:
+            include_inactive (bool, optional): Whether to include deactivated LFs
+        
+        Returns:
+            list(LabelingFunction)
+        """
+        return self.lf_db.get_lfs(include_inactive=include_inactive)
 
-        self.Y_dev = df_dev.label.values
-        self.Y_valid = df_valid.label.values
-        self.Y_test = df_test.label.values
-        self.Y_heldout = df_heldout.label.values
+    def has_lfs(self):
+        """Determine whether the model has any active labeling functions.
+        
+        Returns:
+            bool: whether the model has any active labeling functions.
+        """
+        return len(self.get_lfs()) > 0
 
-        self.lfs = lfs
-        self.count = len(lfs)
-
-        self.L_train = None
-        self.L_dev = None
-        self.L_heldout = None
-
-        if label_model is None:
-            cardinality = len(df_valid.label.unique())
-            self.label_model = LabelModel(cardinality=cardinality, verbose=True)
-        else: 
-            self.label_model = label_model
-
-        self.vectorizer = CountVectorizer(ngram_range=(1, 2))
-        self.vectorizer.fit(df_train.text.tolist())
-
-    def get_lfs(self):
-        return list(self.lfs.values())
-
-    def add_lfs(self, new_lfs: dict):
-        self.lfs.update(new_lfs)
-        if len(self.lfs)> 0:
-            self.apply_lfs()
-        self.count = len(self.lfs)
+    def add_lfs(self, new_lfs: list):
+        """Add new labeling functions
+        
+        Args:
+            new_lfs (list(LabelingFunction)): See labeling_function.py for specs.
+        """
+        self.lf_db.add_lfs(new_lfs)
 
     def remove_lfs(self, old_lf_ids: list):
-        for lf_id in old_lf_ids:
-            del self.lfs[lf_id]
-        if len(self.lfs)> 0:
-            self.apply_lfs()
-        self.count = len(self.lfs)
-        return len(self.lfs)
-
-    def apply_lfs(self):
-        print("applying")
-
-        lfs = self.get_lfs()
-
-        applier = PandasLFApplier(lfs=lfs)
-        self.L_train = applier.apply(df=self.df_train)
-        self.L_dev = applier.apply(df=self.df_dev)
-        self.L_heldout = applier.apply(df=self.df_heldout)
-
-    def find_duplicate_signature(self):
-        label_matrix = np.vstack([self.L_train, self.L_dev])
-        seen_signatures = {} 
-        dupes = {}
-        lfs = self.get_lfs()
-        signatures = [hash(label_matrix[:,i].tostring()) for i in range(len(lfs))]
-        for i, s in enumerate(signatures):
-            lf = lfs[i]
-            if s in seen_signatures:
-                dupes[lf.name] = seen_signatures[s]
-            else:
-                seen_signatures[s] = lf.name
-        return dupes
-
-
-    def lf_examples(self, lf_id, n=5):
-        lf = self.lfs[lf_id]
-        applier = PandasLFApplier(lfs=[lf])
-        L_train = applier.apply(df=self.df_train)
-        labeled_examples = self.df_train[L_train!=-1]
-        samples = labeled_examples.sample(min(n, len(labeled_examples)), random_state=13)
-        return [{"text": t} for t in samples["text"].values]
-
-    def lf_mistakes(self, lf_id, n=5):
-        lf = self.lfs[lf_id]
-        applier = PandasLFApplier(lfs=[lf])
-        L_dev = applier.apply(df=self.df_dev).squeeze()
-        labeled_examples = self.df_dev[(L_dev!=-1) & (L_dev != self.df_dev["label"])]
-        samples = labeled_examples.sample(min(n, len(labeled_examples)), random_state=13)
-        return [{"text": t} for t in samples["text"].values]
-
-    def fit_label_model(self):
-        assert self.L_train is not None
-
-        self.label_model.fit(L_train=self.L_train, n_epochs=1000, lr=0.001, log_freq=100, seed=123)
-
-
-    def analyze_lfs(self):
-        if len(self.lfs) > 0:
-            try:
-                df = LFAnalysis(L=self.L_train, lfs=self.get_lfs()).lf_summary()
-            except ValueError:
-                self.apply_lfs()
-                df = LFAnalysis(L=self.L_train, lfs=self.get_lfs()).lf_summary()
-            dev_df = LFAnalysis(L=self.L_dev, lfs=self.get_lfs()).lf_summary(Y=self.Y_dev)
-            df = df.merge(dev_df, how="outer", suffixes=(" Training", " Dev."), left_index=True, right_index=True)
-            df["Weight"] = self.label_model.get_weights()
-            df["Duplicate"] = None
-            for dupe, OG in self.find_duplicate_signature().items():
-                print("Duplicate labeling signature detected")
-                print(dupe, OG)
-                df.at[dupe, "Duplicate"] = OG
-
-            return df
-        return None
-
-    def get_label_model_stats(self):
-        result = self.label_model.score(L=self.L_dev, Y=self.Y_dev, metrics=["f1", "precision", "recall"])
-
-        probs_train = self.label_model.predict_proba(L=self.L_train)
-        df_train_filtered, probs_train_filtered = filter_unlabeled_dataframe(
-            X=self.df_train, y=probs_train, L=self.L_train
-        )
-        result["training_label_coverage"] = len(probs_train_filtered)/len(probs_train)
-        exp = self.df_dev["label"].value_counts()[1] / len(self.df_dev)
-        result["expected_class_0_ratio"] = exp
-        result["class_0_ratio"] = (probs_train_filtered[:,0]>0.5).sum()/len(probs_train_filtered)
-        print((probs_train_filtered[:,0]>0.5).sum())
-        if len(probs_train_filtered) == 0:
-            result["class_0_ratio"] = 0
-
-        return result
-
-    def get_heldout_stats(self):
-        if self.L_heldout is not None:
-            return self.label_model.score(L=self.L_heldout, Y=self.Y_heldout, metrics=["f1", "precision", "recall"])
-        return {}
-
-    def train(self):
-        probs_train = self.label_model.predict_proba(L=self.L_train)
-
-        df_train_filtered, probs_train_filtered = filter_unlabeled_dataframe(
-            X=self.df_train, y=probs_train, L=self.L_train
-        )
-
-        if len(df_train_filtered) == 0:
-            print("Labeling functions cover none of the training examples!", file=sys.stderr)
-            return {"micro_f1": 0}
-
-        #from tensorflow.keras.utils import to_categorical
-        #df_train_filtered, probs_train_filtered = self.df_dev, to_categorical(self.df_dev["label"].values)
+        """Deactivate the given labeling functions
         
+        Args:
+            old_lf_ids (list(str)): IDs of the labeling functions to deactivate
+        """
+        for lf_id in old_lf_ids:
+            self.lf_db.deactivate(lf_id)
 
-        vectorizer = self.vectorizer
-        X_train = vectorizer.transform(df_train_filtered.text.tolist())
+    def apply(self, dataset, lfs=None):
+        """Apply the labeling functions to the given dataset.
+        If the dataset is a Dataset (defined in api/dataset.py) it will cache 
+        previous labels for faster application. If the dataset is a pandas DataFrame,
+        performance will be slower.
+        
+        Args:
+            dataset (Dataset or pandas.DataFrame): the data to apply LFs on. Must have 
+                attribute "text"
+            lfs (None, optional): if no labeling functions are passed, default to 
+                all active labeling functions.
+        
+        Returns:
+            matrix: size (number of examples in dataset)*(number of LFs)
+        
+        Raises:
+            AttributeError: If apply is called when the modeler has no active labeling functions
+                and none are passed.
+        """
+        if not self.has_lfs():
+            raise AttributeError("modeler.apply was called with no labeling functions.")
+        if lfs is None:
+            lfs = self.get_lfs()
+        if hasattr(dataset, "apply_lfs"):
+            # if dataset is of the class Dataset, it has an optimized apply_lf function
+            label_matrix = dataset.apply_lfs(lfs)
+        else:
+            # otherwise, a dataframe-like object was passed, and we need to use .apply
+            # this is slower because it does not store previously computed labels
+            applier = PandasLFApplier(lfs=lfs)
+            label_matrix = applier.apply(df = dataset)
+        return label_matrix
 
-        X_dev = vectorizer.transform(self.df_dev.text.tolist())
-        X_valid = vectorizer.transform(self.df_valid.text.tolist())
-        X_test = vectorizer.transform(self.df_test.text.tolist())
+    def fit(self, dataset):
+        """Fit the label model to the dataset. This is the model that combines outputs from all 
+        active labeling functions into probabilistic labels.
+        
+        Args:
+            dataset (Dataset or pandas.DataFrame): The dataset on which to fit the model, usually a large
+            unlabelled dataset.
+        """
+        if self.has_lfs():
+            label_matrix = self.apply(dataset)
+            self.label_model.fit(L_train=label_matrix, n_epochs=1000, lr=0.001, log_freq=100, seed=123)
 
-        self.keras_model = get_keras_logreg(input_dim=X_train.shape[1])
+    def predict(self, dataset):
+        """Predict probabilistic labels for the given dataset.
+        
+        Args:
+            dataset (Dataset or pandas.DataFrame)
+        
+        Returns:
+            matrix: size (number of examples in dataset)*(model cardinality)
+        """
+        label_matrix = self.apply(dataset)
+        probs = self.label_model.predict_proba(L=label_matrix)
+        return probs
 
-        self.keras_model.fit(
-            x=X_train,
-            y=probs_train_filtered,
-            validation_data=(X_valid, preds_to_probs(self.Y_valid, 2)),
-            callbacks=[get_keras_early_stopping()],
-            epochs=20,
-            verbose=0,
-        )
+    def fit_predict(self, dataset):
+        """Fit model to the dataset and return predicted labels.
+        
+        Args:
+            dataset (Dataset or pandas.DataFrame)
+        
+        Returns:
+            matrix: size (number of examples in dataset)*(model cardinality)
+        """
+        self.fit(dataset)
+        return self.predict(dataset)
 
-        preds_test = self.keras_model.predict(x=X_test).argmax(axis=1)
+    def save(self, path):
+        """Save the modeler
+        
+        Args:
+            path (str): path to a folder where the model will be saved.
+        """
 
-        #return preds_test
-        return self.get_stats(self.Y_test, preds_test)
+        try:
+            os.mkdir(path)
+        except FileExistsError as e:
+            pass
 
-    def get_heldout_lr_stats(self):
-        X_heldout = self.vectorizer.transform(self.df_heldout.text.tolist())
+        if not os.path.exists(os.path.join(path, "custom_functions.py")):
+            with open(os.path.join(path, "custom_functions.py"), "w+") as file:
+                file.write("# Place your custom functions in this array\nmy_lfs = []")
 
-        preds_test = self.keras_model.predict(x=X_heldout).argmax(axis=1)
-        return self.get_stats(self.Y_heldout, preds_test)
+        # save lfs
+        self.lf_db.save(os.path.join(path, 'LF_DB.json'))
+        # save label_model
+        self.label_model.save(os.path.join(path, 'label_model.pkl'))
 
-    def get_stats(self, Y_test, preds_test):
+    @staticmethod
+    def load(path):
+        """Load a previously saved modeler.
+        
+        Args:
+            path (str): path to the folder where the model is saved.
+        
+        Returns:
+            Modeler
+        """
+        # load ruler lfs
+        lf_db = LFDB.load(os.path.join(path, 'LF_DB.json'))
+        # load custom lfs
+        head, tail = os.path.split(path)
+        sys.path.insert(0, head)
+        custom_functions = import_module(tail + '.custom_functions')
+        reload(custom_functions)
+        my_lfs = custom_functions.my_lfs
+        import inspect
+        to_add = [LabelingFunction(f=lf, 
+                    name=lf.__name__, 
+                    as_string=inspect.getsource(lf)
+                    ) for i, lf in enumerate(my_lfs)]
+        lf_db.add_lfs(to_add)
 
-        label_classes = np.unique(self.Y_test)
-        accuracy = metrics.accuracy_score(Y_test, preds_test)
-        precision_0, precision_1 = metrics.precision_score(Y_test, preds_test, labels=label_classes, average=None)
-        recall_0, recall_1 = metrics.recall_score(Y_test, preds_test, labels=label_classes, average=None)
-        test_f1 = metrics.f1_score(Y_test, preds_test, labels=label_classes)
+        # load label_model
+        label_model = LabelModel()
+        label_model.load(os.path.join(path, 'label_model.pkl'))
+        return Modeler(lf_db=lf_db, label_model=label_model, cardinality=label_model.cardinality)
 
-        #recall_0, recall_1 = metrics.precision_recall_fscore_support(self.Y_test, preds_test, labels=label_classes)["recall"]
-        return {
-            "micro_f1": test_f1,
-            "recall_0": recall_0,
-            "precision_0": precision_0,
-            "accuracy": accuracy,
-            "recall_1": recall_1,
-            "precision_1": precision_1
-        }
+    def get_weights(self):
+        """Get the weights assigned to each labeling function
+        
+        Returns:
+            list: weight for each active labeling function
+        """
+        if self.has_lfs():
+            return self.label_model.get_weights()
+        else:
+            return []
 
-    def entropy(self, prob_dist):
-        #return(-(L_row_i==-1).sum())
-        return(-sum([x*log(x) for x in prob_dist]))
+    def analyze_lfs(self, dataset, labels=None):
+        """Create a dataframe analysis of coverage, conflict, accuracy, etc for each LF.
+        
+        Args:
+            dataset (Dataset or pandas.DataFrame): over which to compute coverage, conflicts, etc
+            labels (None, optional): The ground truth labels for the dataset, used to compute accuracy.
+        
+        Returns:
+            pandas.DataFrame: a row for each LF, and a column for each statistic.
+        
+        Raises:
+            AttributeError: if modeler has no active labeling functions, no analysis can be performed.
+        """
+        if self.has_lfs():
+            if labels is not None:
+                L = self.apply(dataset)
+                df = LFAnalysis(L=L, lfs=self.get_lfs()).lf_summary(Y=labels)
 
-    def next_text(self):
-        subset_size = 50
+                # For some reason, the columns "Correct" and "Incorrect" are not correctly calculated by Snorkel LFAnalysis (irony)
+                # We compute this manually
+                n, m = L.shape
+                Y = labels
+                labels = np.unique(
+                    np.concatenate((Y.flatten(), L.flatten(), np.array([-1])))
+                )
+                confusions = [
+                    metrics.confusion_matrix(Y, L[:, i], labels)[1:, 1:] for i in range(m)
+                ]
+                corrects = [np.diagonal(conf).sum() for conf in confusions]
+                incorrects = [
+                    conf.sum() - correct for conf, correct in zip(confusions, corrects)
+                ]
 
-        min_times_seen = self.df_train["seen"].min()
-        least_seen_examples = self.df_train[self.df_train["seen"]==min_times_seen]
+                df["Correct"] = corrects
+                df["Incorrect"] = incorrects
+            else:
+                df = LFAnalysis(L=self.apply(dataset), lfs=self.get_lfs()).lf_summary()
+            return df
+        else:
+            raise AttributeError("analyze_lfs called when Modeler has no labeling functions.")
 
-        if ((len(self.lfs) == 0) or (len(least_seen_examples)==1) or (self.L_train is None)):
-            #return one of the least seen examples, chosen randomly
-            res_idx = least_seen_examples.sample(1).index[0]
-        else: 
-            #take a sample of size subset_size, compute entropy, and return the example with highest entropy
-            subset = least_seen_examples.sample(min(subset_size, len(least_seen_examples)))
-            L_train = self.L_train[self.df_train.index.isin(subset.index)]
-            probs = self.label_model.predict_proba(L=L_train)
-            entropy = [self.entropy(x) for x in probs] # get entropy for each text example
-            subset = subset[entropy==max(entropy)]
-            res_idx = subset.sample(1).index[0]
-        self.df_train.at[res_idx, "seen"] += 1
-        return {"text": self.df_train.at[res_idx, "text"], "id": int(res_idx)}
+    def GLL_repr(self, include_inactive=False):
+        """Get a human-readable (generalized labeling language) representation of the labeling functions.
+        
+        Args:
+            include_inactive (bool, optional): Whether to include deactivated LFs
+        
+        Returns:
+            dict: {lf ID: lf representation}
+        """
+        return self.lf_db.GLL_repr(include_inactive=include_inactive)
 
-    def text_at(self, index):
-        self.df_train.at[index, "seen"] += 1
-        return {"text": self.df_train.at[index, "text"], "id": int(index)}
+    def record_stats(self, stats: dict):
+        """Record the latest statistics for the labeling functions
+        
+        Args:
+            stats (dict): {LF ID: statistics dictionary}
+        
+        Returns:
+            dict: the complete labeling function statistics, 
+                potentially a superset of the passed statistics.
+        """
+        return self.lf_db.update(stats)
 
-    def save(self, dir_name):
-        self.label_model.save(os.path.join(dir_name, 'label_model.pkl'))
-        with open(os.path.join(dir_name, 'model_lfs.pkl'), "wb+") as file:
-            pickle.dump(self.lfs, file)
+    def update_concept(self, concept: str, deleted=False):
+        """When a concept is updated, update the uuids of the LFs that use that concept (since they 
+        will have a new labelling signature)
+        
+        Args:
+            concept (str): the concept that was updated
+            deleted (bool, optional): whether the concept was deleted. 
+                In this case, the relevant LFs will be deleted.
+        """
+        self.lf_db.update_concept(concept)
 
-    def load(self, dir_name):
-        with open(os.path.join(dir_name, 'model_lfs.pkl'), "rb") as file:
-            lfs = pickle.load(file)
-            label_model = LabelModel.load(os.path.join(dir_name, 'label_model.pkl'))
-            self.lfs = lfs
-            self.label_model = label_model
+
+class LFDB:
+    """Stores labeling functions and their associated statistics.
+    Functions generated by Ruler will be saved and loaded with save() and load(),
+    respectively, but custom python functions must be written to the modeler's 
+    custom python function file [path_to_modeler]/custom_functions.py
+    
+    Attributes:
+        db (dict): {LF ID: LabelingFunction}
+    """
+    
+    def __init__(self, db={}):
+        self.db = db
+
+    def __contains__(self, item: str):
+        return item in self.db
+
+    def __len__(self):
+        return len(self.db)
+
+    def __getitem__(self, lf_id):
+        return self.db[lf_id]
+
+    def get_lfs(self, include_inactive=False):
+        """Get all labeling functions in DB
+        
+        Args:
+            include_inactive (bool, optional): whether to include deactivated functions
+        
+        Returns:
+            list(LabelingFunction)
+        """
+        if include_inactive:
+            return list(self.db.values())
+        else:
+            return [lf for lf in self.db.values() if lf.active]
+
+    def GLL_repr(self, include_inactive=False):
+        GLL_representations = {lf.name: lf.GLL_repr() for lf in self.get_lfs(include_inactive=include_inactive)}
+        return pd.DataFrame.from_dict(GLL_representations, orient="index")
+
+    def add_lfs(self, new_lfs: list):
+        """Add labeling functions
+        
+        Args:
+            new_lfs (list(LabelingFunction))
+        """
+        for lf in new_lfs:
+            name = lf.name
+            if not name in self.db:
+                lf.submit()
+                lf.activate()
+                self.db[name] = lf
+            else:
+                self.db[name].activate()
+
+    def delete(self, lf_id: str):
+        """Delete a labeling function
+        
+        Args:
+            lf_id (str): the ID
+        
+        Returns:
+            LabelingFunction: the deleted function
+        """
+        return self.db.pop(lf_id)
+
+    def deactivate(self, lf_id: str):
+        """Deactivate a labeling function. The function is still in the database, 
+        but will not be used in modeler.apply
+        
+        Args:
+            lf_id (str): the ID
+        
+        Returns:
+            LabelingFunction: the deactivated function
+        """
+        self.db[lf_id].deactivate()
+        return self.db[lf_id]
+
+    def update_concept(self, concept: str, deleted=False):
+        """When a concept is updated, update the uuids of the LFs that use that concept (since they 
+        will have a new labelling signature)
+        
+        Args:
+            concept (str): the concept that was updated
+            deleted (bool, optional): whether the concept was deleted. 
+                In this case, the relevant LFs will be deleted.
+        """
+        def condition_uses_concept(cond):
+            if cond['type'] == KeyType[CONCEPT]:
+                if cond['string'] == concept:
+                    return True
+            return False
+
+        for lf_id, lf in self.db.items():
+            conds = lf.GLL_repr()[CONDS]
+            if conds is not None:
+                if any([condition_uses_concept(cond) for cond in conds]):
+                    if deleted:
+                        self.delete(lf_id)
+                    else:
+                        lf.new_uuid()
+
+    def update(self, stats: dict):
+        """Update the recorded statistics over labeling functions
+        
+        Args:
+            stats (dict): May include things like coverage, conflicts, accuracy, etc.
+        
+        Returns:
+            dict: a copy of the current statistics. This may be a superset of the submitted statistics.
+        """
+        for lf_id, stats_dict in stats.items():
+            self.db[lf_id].update(stats_dict)
+        return self.db.copy()
+
+    def save(self, path):
+        """Save the labeling functions. Only the GLL (Generalized Labeling Language) functions that Ruler
+        generates will be saved on this path. Any custom python functions must be submitted via a python file
+        [path_to_modeler]/custom_functions.py, where they are stored.
+
+        Args:
+            path (string): Path to file where the json representation of the LF_DB will be written.
+        """
+        with open(path, "w+") as file:
+            db_json = {
+                lf_id: lf.to_json() \
+                    for lf_id, lf in self.db.items() \
+                    if lf.has_GLL_repr()
+            }
+            json.dump(db_json, file, default=str, indent=2)
+
+    @staticmethod
+    def load(path):
+        """Load a previously saved GLL representations of labeling functions into a new LF_DB
+        
+        Args:
+            path (string): Path to json representation of LF_DB
+        
+        Returns:
+            LF_DB
+        """
+        with open(path, "r") as file:
+            db_json = json.load(file)
+            print(db_json)
+            db = {
+                lf_id: LabelingFunction.read_json(lf_json) \
+                    for lf_id, lf_json in db_json.items()
+            }
+            return LFDB(db=db)

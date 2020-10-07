@@ -54,12 +54,158 @@ definitions:
 
 # Paths supported by the server application
 paths:
+  /models:
+    post:
+      operationId: idea2.select_model
+      tags:
+        - Project Management
+      summary: Select a model for this project
+      parameters:
+        - name: config
+          description: model configuration data
+          required: true
+          in: body
+          schema:
+            type: object
+            properties:
+              model_name:
+                type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+    get:
+      operationId: idea2.get_models
+      tags:
+        - Project Management
+      summary: View available Ruler models
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              type: string   
+
+  /models/{model_name}:
+    post:
+      operationId: idea2.create_new_model
+      tags:
+        - Project Management
+      summary: Create a new Ruler model
+      parameters:
+        - name: model_name
+          description: Name of the new model
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+
+  /datasets:
+    get:
+      operationId: idea2.get_datasets
+      tags:
+        - Project Management
+      summary: View available datasets
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              type: string
+    post:
+      operationId: idea2.select_dataset
+      tags:
+        - Project Management
+      summary: Select a dataset for this project
+      parameters:
+        - name: config
+          description: Information on the selected dataset
+          required: true
+          in: body
+          schema:
+            type: object
+            properties:
+              dataset_uuid:
+                type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+
+  /datasets/{dataset_uuid}:
+    post:
+      operationId: idea2.post_data
+      tags:
+        - Project Management
+      summary: Upload a new dataset
+      parameters:
+        - name: dataset_uuid
+          description: ID for this dataset
+          in: path
+          type: string
+          required: true
+        - name: file
+          in: formData
+          description: file to upload and preprocess
+          required: true
+          type: file
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              type: string
+    get:
+      operationId: idea2.get_dataset
+      tags:
+        - Project Management
+      summary: View files in a dataset
+      parameters:
+        - name: dataset_uuid
+          description: ID for this dataset
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              type: string
+
+  /datasets/{dataset_uuid}/status:
+    get:
+      operationId: idea2.progress
+      tags:
+        - Project Management
+      summary: get status of dataset preparation
+      parameters:
+        - name: dataset_uuid
+          description: ID for this dataset
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            type: number
 
   /label:
     get:
       operationId: idea2.get_labels
       tags:
-        - GLL
+        - GLL (Generalized Labeling Language)
       summary: Get pre-defined labels
       responses:
         200:
@@ -68,12 +214,28 @@ paths:
             type: object
             additionalProperties:
               type: integer
+    post:
+      operationId: idea2.post_labels
+      tags:
+        - Project Management
+      summary: Define labels for a task
+      parameters:
+        - name: labels
+          in: body
+          required: true
+          schema:
+            type: object
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
 
   /connective:
     get:
       operationId: idea2.get_connective
       tags:
-        - GLL
+        - GLL (Generalized Labeling Language)
       summary: Get pre-defined connective definition
       description: Get pre-defined connective definition for AND, OR among multiple conditions
       responses:
@@ -88,7 +250,7 @@ paths:
     get:
       operationId: idea2.get_keytype
       tags:
-        - GLL
+        - GLL (Generalized Labeling Language)
       summary: Get pre-defined key types
       description: Get pre-defined key types (e.g., a highlighed token is a token, concept or named entity.
       responses:
@@ -154,7 +316,7 @@ paths:
             $ref: '#/definitions/Tokens'
             description: List of tokens and their keytypes that belong to the requested concept
     put:
-      operationId: idea2.update_tokens
+      operationId: idea2.update_concept
       tags:
         - Concept
       summary: Update tokens of existing concept
@@ -192,7 +354,7 @@ paths:
     get:
       operationId: idea2.next_text
       tags:
-        - Interaction
+        - Labelling Interaction
       summary: Get next text to label, possibly with annotations
       responses:
         200:
@@ -211,7 +373,7 @@ paths:
     post:
       operationId: idea2.submit_interaction
       tags:
-        - Interaction
+        - Labelling Interaction
       summary: Submit the labeled text from the user
       parameters:
         - name: interaction
@@ -249,7 +411,7 @@ paths:
     put:
       operationId: idea2.submit_instances
       tags:
-        - Interaction
+        - Labelling Interaction
       summary: Submit the user selected LF explanation
       parameters:
         - name: lf_dicts
@@ -268,7 +430,7 @@ paths:
     get:
       operationId: idea2.get_interaction_idx
       tags:
-        - Interaction
+        - Labelling Interaction
       summary: Get the previous interaction from history
       parameters:
         - name: idx
@@ -336,7 +498,7 @@ paths:
     get:
       operationId: idea2.get_logreg_stats
       tags:
-        - Logistic Regression Model Statistics
+        - Statistics
       summary: Get the current quality statistics of an LR model trained on your labels
       responses:
         200:
@@ -361,7 +523,7 @@ paths:
     get:
       operationId: idea2.get_lf_stats
       tags:
-        - LFStatistics
+        - Statistics
       summary: Get the current LF statistics
       responses:
         200:
@@ -371,7 +533,7 @@ paths:
     put:
       operationId: idea2.delete_lfs
       tags:
-       - LFStatistics
+       - Statistics
       summary: Delete a previous LF
       parameters:
         - name: lf_ids
@@ -389,7 +551,7 @@ paths:
     get:
       operationId: idea2.get_lf_label_examples
       tags:
-        - LFStatistics
+        - Statistics
       summary: Get examples of text labeled by the given labeling function
       parameters:
         - name: lf_id
@@ -438,10 +600,10 @@ paths:
 
   /save:
     post:
-      operationId: idea2.save_model
+      operationId: idea2.upload_model
       tags:
-        - Save
-      summary: Save the interactions, labeling functions, and model to disk.
+        -  Project Management
+      summary: Upload the interactions, labeling functions, and model to google drive.
       parameters:
         - name: data
           in: body
@@ -455,5 +617,18 @@ paths:
                 description: name of the directory to store model in
       responses:
         200:
-          description: OK    
+          description: OK  
+          schema:
+            type: object  
+    get:
+      operationId: idea2.download_model
+      tags:
+        -  Project Management
+      summary: Save the interactions, labeling functions, and model to disk and send to browser
+      responses:
+        200:
+          description: OK
+          schema:
+            type: file
+  
               

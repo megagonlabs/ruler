@@ -3,7 +3,6 @@ import {bindActionCreators} from 'redux';
 import {connect} from "react-redux";
 
 import Avatar from '@material-ui/core/Avatar';
-import Badge from '@material-ui/core/Badge';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Collapse from '@material-ui/core/Collapse';
@@ -48,7 +47,7 @@ class Concept extends React.Component {
         //Remove annotations that came from this element
         var new_annotations = this.props.annotations.filter(
             annotation => {
-                if (annotation.origin == old_token.string) {
+                if (annotation.origin === old_token.string) {
                     return false;
                 } return true;
             })

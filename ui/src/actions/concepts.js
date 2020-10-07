@@ -1,5 +1,4 @@
 import axios from 'axios';
-import api from './api'
 import conceptStyler from './ConceptStyler'
 
 export const GET_CONCEPTS_PENDING = "GET_CONCEPTS_PENDING";
@@ -7,6 +6,8 @@ export const UPDATE_CONCEPT_PENDING = "UPDATE_CONCEPT_PENDING";
 export const GET_CONCEPTS_SUCCESS = "GET_CONCEPTS_SUCCESS";
 export const GET_CONCEPTS_ERROR = "GET_CONCEPTS_ERROR";
 export const SELECT_CONCEPT = 'SELECT_CONCEPT'
+
+const api = process.env.REACT_APP_SERVER;
 
 function getConceptsPending() {
     return {

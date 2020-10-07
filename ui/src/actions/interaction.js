@@ -1,11 +1,12 @@
 import axios from 'axios';
-import api from './api'
 import {setInteraction, getTextPending} from './getText'
 
 export const DELETE_INTERACTION = "DELETE_INTERACTION";
 export const GET_INTERACTION_SUCCESS = "GET_INTERACTION_SUCCESS"
 export const GET_INTERACTION_PENDING = "GET_INTERACTION_PENDING"
 export const GET_INTERACTION_ERROR = "GET_INTERACTION_ERROR"
+
+const api = process.env.REACT_APP_SERVER;
 
 export function deleteInteraction(index) {
     return {

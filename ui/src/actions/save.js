@@ -1,15 +1,15 @@
 import axios from 'axios';
-import api from './api'
 
 export const SAVE_ERROR = "SAVE_ERROR"
 export const SAVE_PENDING = "SAVE_PENDING"
 export const SAVE_SUCCESS = "SAVE_SUCCESS"
 
+const api = process.env.REACT_APP_SERVER;
 
 function saveSuccess(data) {
     return {
         type: SAVE_SUCCESS,
-        data: data
+        data: data,
     }
 }
 
@@ -27,6 +27,12 @@ function saveError(error) {
 }
 
 export function saveModel() { 
+    return dispatch => {
+        window.open(`${api}/save`);
+    }
+}
+
+export function uploadModel() { 
     return dispatch => {
         dispatch(savePending());
         var today = new Date();   

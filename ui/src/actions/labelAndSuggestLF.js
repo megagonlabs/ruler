@@ -1,8 +1,9 @@
 import axios from 'axios';
-import api from './api'
 
 export const LABEL = 'LABEL'
 export const NEW_LF = 'NEW_LF'
+
+const api = process.env.REACT_APP_SERVER;
 
 export function reset_label(){
     return dispatch => {

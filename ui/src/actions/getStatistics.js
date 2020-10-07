@@ -1,9 +1,10 @@
 import axios from 'axios';
-import api from './api'
 
 export const GET_STATS_PENDING = "GET_STATS_PENDING";
 export const GET_STATS_SUCCESS = "GET_STATS_SUCCESS";
 export const GET_STATS_ERROR = "GET_STATS_ERROR";
+
+const api = process.env.REACT_APP_SERVER;
 
 export function getStatsPending() {
     return {

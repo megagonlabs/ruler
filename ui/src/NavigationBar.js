@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import Badge from '@material-ui/core/Badge';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
+import MegagonIcon from './MegagonIcon';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
@@ -158,29 +159,27 @@ const NavigationBar = (props)=> {
   );
 
   return (
-      //<div className={classes.grow}>
       <AppBar position="static"
               className={clsx(classes.appBar, {
                 [classes.appBarShift]: open,
               })}
       >
         <Toolbar>
+          <IconButton
+              edge="start"
+              color="inherit"
+              onClick={props.handleDrawerOpen}
+              className={clsx(classes.menuButton, open && classes.hide)}
+              aria-label="Open drawer"
+          >
+            <MegagonIcon/>
+          </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
  		 Řuler: Data Programming by Demonstration for Text 
           </Typography>
 
           <div className={classes.grow}/>
           <div className={classes.sectionDesktop}>
-            {/*<IconButton aria-label="Show 4 new mails" color="inherit">*/}
-            {/*  <Badge badgeContent={4} color="secondary">*/}
-            {/*    <MailIcon />*/}
-            {/*  </Badge>*/}
-            {/*</IconButton>*/}
-            {/*<IconButton aria-label="Show 17 new notifications" color="inherit">*/}
-            {/*  <Badge badgeContent={17} color="secondary">*/}
-            {/*    <NotificationsIcon />*/}
-            {/*  </Badge>*/}
-            {/*</IconButton>*/}
             <IconButton
                 edge="end"
                 aria-label="Account of current user"

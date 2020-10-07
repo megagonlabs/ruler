@@ -1,8 +1,8 @@
 import axios from 'axios';
-import api from './api'
 
 export const KEYTYPE = "KEYTYPE"
 export const CONNECTIVE = "CONNECTIVE"
+const api = process.env.REACT_APP_SERVER;
 
 export function getKeyTypes() {
     return dispatch => {

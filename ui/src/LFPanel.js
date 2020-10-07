@@ -58,7 +58,7 @@ class LFPanel extends React.Component {
         const anchorEl = this.state.anchorEl;
         const open = (Boolean(anchorEl) && !this.props.pending);
 
-        var fields_to_display = ["conditions", "label", "Weight", "Coverage Training", "Conflicts Training", "Emp. Acc.", "Correct", "Incorrect"]
+        var fields_to_display = ["conditions", "label", "Weight", "Coverage Train", "Conflicts Train", "Emp. Acc.", "Correct", "Incorrect"]
         var names_to_display =  ["Conditions", "Label", "Snorkel Weight", "Training Set Coverage", "Training Set Conflicts", "Estimated Accuracy", "Correct", "Incorrect", "Context"]
 
         if (this.props.lf.context) {
@@ -104,7 +104,7 @@ class LFPanel extends React.Component {
                                 )}
                             </TableBody></Table>    
                             <br/>
-                            <Button align="right" variant="contained" onClick={this.returnToInteraction.bind(this)}>Return to this interaction</Button>
+                            <Button align="right" variant="contained" disabled={this.props.lf.interaction_idx==null} onClick={this.returnToInteraction.bind(this)}>Return to this interaction</Button>
                             <Typography variant="h6"> False Positives ({this.props.mistakes.length})</Typography>
                             <Typography variant="body1">Up to 5 examples from the development set that are INCORRECTLY labeled by this function. </Typography>
                             <br/>
@@ -123,6 +123,7 @@ class LFPanel extends React.Component {
                         </Grid>
                         <Grid container item xs={6} className={classes.grid} direction={'column'} justify={'flex-start'}>
                             <Paper className={classes.paper}>
+                                {("as_string" in this.props.lf) ? <><Typography variant="h6"> Custom Function </Typography> <Typography variant="body1"> {this.props.lf.as_string} </Typography></>: ""}
                                 <Typography variant="h6"> Matches ({this.props.examples.length})</Typography>
                                 <Typography variant="body1">Examples from the training data that are labeled by this function. </Typography>
                                 <br/>

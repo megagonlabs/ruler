@@ -1,9 +1,11 @@
 import axios from 'axios';
-import api from './api'
 
 export const GET_CLASSES_SUCCESS="GET_CLASSES_SUCCESS";
 export const GET_CLASSES_PENDING="GET_CLASSES_PENDING";
 export const GET_CLASSES_ERROR="GET_CLASSES_ERROR";
+export const ADD_CLASS_SUCCESS="ADD_CLASS_SUCCESS";
+
+const api = process.env.REACT_APP_SERVER;
 
 function pending() {
     return {
@@ -25,13 +27,48 @@ function raiseError(error) {
     }
 }
 
-function dataFromResponse(response) {
-    return Object.keys(response.data).map(k => {
+function addClassSuccess(data) {
+    return {
+        type: ADD_CLASS_SUCCESS,
+        data: data
+    }
+}
+
+function dataFromResponse(response_data) {
+    return response_data;
+    /*return Object.keys(response_data).map(k => {
         return {
             name: k, 
-            key: response.data[k]
+            key: response_data[k]
         }
-    })
+    })*/
+}
+
+export function submitLabels(labelClasses) {
+    return dispatch => {
+        dispatch(pending());
+        axios.post(`${api}/label`,
+            {
+                labels: labelClasses,
+            }
+        )
+        .then(response => {
+            if (response.error) {
+                throw(response.error);
+            }
+            const data = dataFromResponse(response.data);
+            dispatch(getClassesSuccess(data));
+        })
+        .catch(error => {
+            dispatch(raiseError(error));
+        })
+    }
+}
+
+export function addLabelClass(labelClassObj) {
+    return dispatch => {
+        dispatch(addClassSuccess(labelClassObj));   
+    }
 }
 
 function fetchClasses() {
@@ -42,7 +79,8 @@ function fetchClasses() {
             if(response.error) {
                 throw(response.error);
             }
-            const data = dataFromResponse(response);
+            const data = dataFromResponse(response.data["labels"]);
+            console.log(data);
             dispatch(getClassesSuccess(data));
         })
         .catch(error => {

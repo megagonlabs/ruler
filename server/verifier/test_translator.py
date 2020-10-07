@@ -1,7 +1,8 @@
 import unittest
 
 from synthesizer.gll import *
-from verifier.translator import make_lf
+from verifier.translator import raw_stringify
+from verifier.labeling_function import make_lf
 from types import SimpleNamespace
 
 class translatorTest(unittest.TestCase):
@@ -14,7 +15,7 @@ class translatorTest(unittest.TestCase):
             LABEL: 1,
             DIRECTION: False,
             CONNECTIVE: ConnectiveType[OR],
-            CONDS: [{"string": "great", "type": KeyType[TOKEN]}]
+            CONDS: [{"string": raw_stringify("great"), "type": KeyType[TOKEN]}]
         }
         concepts = {}
         lf = make_lf(instance, concepts)

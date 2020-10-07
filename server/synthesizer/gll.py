@@ -41,11 +41,14 @@ class ConceptWrapper:
     def __init__(self, d={}):
         self.dict = d
 
-    def __str__(self):
-        return self.name
-
     def __len__(self):
         return len(self.dict.keys())
+
+    def __contains__(self, item):
+        return self.dict.__contains__(item)
+
+    def __getitem__(self, item):
+        return self.dict.__getitem__(item)
 
     def get_dict(self):
         return self.dict
@@ -71,13 +74,15 @@ class ConceptWrapper:
         assert name in self.dict.keys()
         del self.dict[name]
 
-    def save(self, dirname):
-        with open(os.path.join(dirname, self.filename), "w+") as file:
+    def save(self, path):
+        with open(path, "w+") as file:
             json.dump(self.dict, file)
 
-    def load(self, dirname):
-        with open(os.path.join(dirname, self.filename), "r") as file:
-            self.dict = json.load(file)
+    @staticmethod
+    def load(path):
+        with open(path, "r") as file:
+            d = json.load(file)
+            return ConceptWrapper(d=d)
 
 
 class Token:
@@ -208,7 +213,6 @@ class Relationship:
                     if token.sent_idx != sentence_idx:
                         same_sent = False
                 if same_sent:
-                    print("same sentence!")
                     new_instance = copy.deepcopy(crnt_instance)
                     new_instance[CONTEXT] = ContextType[SENTENCE]
                     new_instance["CONTEXT_"] = SENTENCE
@@ -216,21 +220,18 @@ class Relationship:
 
         if len(cp_instances) > 0:
             instances.extend(cp_instances)
-        print("all instances: ")
-        for crnt_instance in instances:
-            print(crnt_instance)
         return instances
 
 
 # for classification problem, this is the label class
 class Label:
-    def __init__(self, name):
+    def __init__(self, name, d={"ABSTAIN": -1}, count=0):
         self.task_name = name
-        self.dict = {"ABSTAIN": -1}
-        self.count = 0
+        self.dict = d
+        self.count = count
 
-    def add_label(self, lname: str):
-        self.dict[lname] = self.count
+    def add_label(self, lname: str, value: int):
+        self.dict[lname] = value
         self.count += 1
 
     def to_int(self, lname: str):
@@ -241,10 +242,27 @@ class Label:
             if i == v:
                 return k
 
+    def change_name(self, name):
+        self.task_name = name
+
     def to_dict(self):
         crnt_keys = list(self.dict.keys())
         crnt_keys.remove("ABSTAIN")
         return {lname: self.dict[lname] for lname in crnt_keys}
+
+    def save(self, path):
+        with open(path, "w+") as file:
+            json.dump({
+                "name": self.task_name,
+                "dict": self.dict,
+                "count": self.count
+                }, file)
+
+    @staticmethod
+    def load(path):
+        with open(path, "r") as file:
+            fields = json.load(file)
+            return Label(fields["name"], d=fields["dict"], count=fields["count"])
 
 def Condition(string, type_str, case_sensitive=False):
     return {

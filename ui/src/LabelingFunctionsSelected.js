@@ -31,6 +31,8 @@ const FadedTableBody = withStyles(theme => ({
   },
 }))(TableBody);
 
+const NOT_APPLICABLE_STRING = "__null__"
+
 class LabelingFunctions extends React.Component {
     constructor(props) {
         super(props);
@@ -39,17 +41,21 @@ class LabelingFunctions extends React.Component {
             order: 'asc',
             orderBy: "ID"
         };
+        this.label = this.label.bind(this);
     }
 
     componentDidMount() {
         this.props.getLFstats();
     }
 
-    label(lf) {
-        const label = this.props.labelClasses.filter(c => c.key === lf.Label)
+    label(lf_label) {
+        if (Array.isArray(lf_label)) {
+            return lf_label.map(this.label).join("/");
+        }
         return (
-            label[0] ? label[0].name : "UNK"
-        );
+            Object.keys(this.props.labelClasses)
+                .filter(c => this.props.labelClasses[c] === lf_label)[0]
+        );    
     }
 
     conditionToString(condition) {
@@ -65,13 +71,16 @@ class LabelingFunctions extends React.Component {
     }
 
     conditions(lf) {
-        const conditions = lf.Conditions.map(cond => this.conditionToString(cond));
-        if (conditions.length > 1) {
-            return (
-                conditions.join(" " + lf.CONNECTIVE_ + " ")
-            );
-        } 
-        return conditions.join('');
+        if (lf.Conditions) {
+            const conditions = lf.Conditions.map(cond => this.conditionToString(cond));
+            if (conditions.length > 1) {
+                return (
+                    conditions.join(" " + lf.CONNECTIVE_ + " ")
+                );
+            } 
+            return conditions.join('');
+        } return NOT_APPLICABLE_STRING;
+
     }
 
     LFtoStrings(key, lf) {
@@ -79,7 +88,6 @@ class LabelingFunctions extends React.Component {
 
         const ACC_THRESHOLD = 0.3;
         if (lf["Emp. Acc."] < ACC_THRESHOLD) {
-            console.log(lf);
             if (lf['Incorrect'] > 0) {
                 warning = <Tooltip title={"low accuracy"}><WarningIcon color={"error"}/></Tooltip>
             }
@@ -89,8 +97,8 @@ class LabelingFunctions extends React.Component {
             id: key,
             conditions: this.conditions(lf),
             context: lf.CONTEXT_,
-            label: this.label(lf),
-            order: lf.Direction.toString(),
+            label: this.label(lf.Label),
+            order: lf.Direction ? lf.Direction.toString() : NOT_APPLICABLE_STRING,
             weight: lf.Weight,
             warning: warning
         };
@@ -106,6 +114,23 @@ class LabelingFunctions extends React.Component {
         }
     }
 
+    areExtraColumnsPresent(LFList, headCells){
+        // Check if there are any LF warnings
+        let any_warnings = false;
+        if (LFList.some(lf => lf["warning"])) {
+            any_warnings = true;
+            headCells.push({ id: 'Warning', numeric: false, disablePadding: true, label: 'Warning' })
+        }
+
+        // Check if any LFs have the field "context"
+        let any_context = false;
+        if (LFList.some(lf => lf["context"])) {
+            any_context = true;
+            headCells.splice(2, 0, { id: 'CONTEXT_', numeric: false, disablePadding: true, label: 'Context'});
+        }
+        return [any_warnings, any_context];
+    }
+
     render() {
 
         var headCells = [
@@ -113,11 +138,14 @@ class LabelingFunctions extends React.Component {
           { id: 'conditions', numeric: false, disablePadding: true, label: 'Conditions' },
           { id: 'label', numeric: false, disablePadding: true, label: 'Label' },
           { id: 'Emp. Acc.', numeric: true, disablePadding: true, label: 'Est. Accuracy' },
-          { id: 'Coverage Training', numeric: true, disablePadding: true, label: 'Train. Coverage' },
-          { id: 'Conflicts Training', numeric: true, disablePadding: true, label: 'Train. Conflicts' },
+          { id: 'Coverage Train', numeric: true, disablePadding: true, label: 'Train. Coverage' },
+          { id: 'Conflicts Train', numeric: true, disablePadding: true, label: 'Train. Conflicts' },
         ];
 
         const { classes } = this.props;
+        const {order, orderBy} = this.state;
+
+        // Handler for sorting the rules by selected column
         const createSortHandler = property => event => {
             const isDesc = orderBy === property && order === 'desc';
             this.setState({
@@ -126,33 +154,12 @@ class LabelingFunctions extends React.Component {
             });
         };
 
-        //if (this.state.orderBy === "ID") {
-        //    if (this.state.order === 'asc') {
-        //        headCells[0]["label"] = "Oldest"
-        //    } else {
-        //        headCells[0]["label"] = "Newest"
-        //    }
-        //}
-
-        const order = this.state.order;
-        const orderBy = this.state.orderBy;
-
         var LFList = Object.keys(this.props.labelingFunctions).map(lf_key => this.LFtoStrings(lf_key, this.props.labelingFunctions[lf_key]));
         const inactive = LFList.filter(LF => !LF.active);
         LFList = LFList.filter(LF => LF.active);
 
-        // Check if there are any LF warnings
-        let any_warnings = false;
-        if (LFList.some(lf => lf["warning"])) {
-            any_warnings = true;
-            headCells.push({ id: 'Warning', numeric: false, disablePadding: true, label: 'Warning' })
-        }
-
-        let any_context = false;
-        if (LFList.some(lf => lf["context"])) {
-            any_context = true;
-            headCells.splice(2, 0, { id: 'CONTEXT_', numeric: false, disablePadding: true, label: 'Context'});
-        }
+        // Warning and context columns are only displayed if any values non-empty
+        const [any_warnings, any_context] = this.areExtraColumnsPresent(LFList, headCells)
         
         return(
           <Paper className={classes.paper}>
@@ -198,8 +205,8 @@ class LabelingFunctions extends React.Component {
                     {any_context ? <TableCell align="right" padding="none">{row.context}</TableCell> : null }
                     <TableCell>{row.label}</TableCell>
                     <TableCell padding="none" align="right">{"Emp. Acc." in row ? (style(row["Emp. Acc."])) : ("...")}</TableCell> 
-                    <TableCell padding="none" align="right">{"Coverage Training" in row ? (style(row["Coverage Training"])) : ("...")}</TableCell> 
-                    <TableCell  padding="none"align="right">{"Conflicts Training" in row ? (style(row["Conflicts Training"])) : ("...")}</TableCell> 
+                    <TableCell padding="none" align="right">{"Coverage Train" in row ? (style(row["Coverage Train"])) : ("...")}</TableCell> 
+                    <TableCell  padding="none"align="right">{"Conflicts Train" in row ? (style(row["Conflicts Train"])) : ("...")}</TableCell> 
                     {any_warnings ? (<TableCell align="right">{row["warning"]}</TableCell>) : null}                     
                     <TableCell padding="none">
                         <IconButton onClick={() => this.props.deleteLF([row.id])} size="small">

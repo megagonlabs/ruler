@@ -39,8 +39,8 @@ class LabelingFunctionsSuggested extends React.Component {
 
     label(lf) {
         return (
-            this.props.labelClasses
-                .filter(c => c.key === lf.Label)[0].name
+            Object.keys(this.props.labelClasses)
+                .filter(c => this.props.labelClasses[c] === lf.Label)[0]
         );    
     }
 

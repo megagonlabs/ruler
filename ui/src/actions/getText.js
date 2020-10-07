@@ -1,11 +1,12 @@
 import axios from 'axios';
-import api from './api'
 import { annotate, select_link, NER } from './annotate'
 import { reset_label, label } from "./labelAndSuggestLF";
 
 export const GET_TEXT_PENDING = "GET_TEXT_PENDING";
 export const GET_TEXT_SUCCESS = 'GET_TEXT_SUCCESS';
 export const GET_TEXT_ERROR = "GET_TEXT_ERROR";
+
+const api = process.env.REACT_APP_SERVER;
 
 export function getTextPending() {
     return {

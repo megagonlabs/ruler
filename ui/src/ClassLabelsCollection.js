@@ -35,15 +35,15 @@ class ClassLabelsCollection extends React.Component {
         const classes = this.props.classes;
         return (
             <ButtonGroup color="primary">
-             { this.props.labelClasses.map( (labelClass) => 
+             { Object.entries(this.props.labelClasses).map( (labelClass, key) => 
                    <Button 
                         className={classes.button} 
-                        key = {labelClass.key}
-                        onClick={() => this.assignLabel(labelClass.key)} 
-                        variant={(this.props.label === labelClass.key) ? "contained" : "outlined"}
+                        key = {key}
+                        onClick={() => this.assignLabel(key)} 
+                        variant={(this.props.label === key) ? "contained" : "outlined"}
                     >
-                        ({labelClass.key})
-                        {labelClass.name}
+                        ({key})
+                        {labelClass}
                     </Button>
                   )
               }
@@ -54,7 +54,7 @@ class ClassLabelsCollection extends React.Component {
 function mapStateToProps(state, ownProps?) {
     return { 
       labelClasses: state.labelClasses.data,
-      hotKeys: state.labelClasses.data.map(lClass => lClass.key),
+      hotKeys: Object.values(state.labelClasses.data).map(lClass => lClass.key),
       annotations: state.annotations,
       label: state.label
     };

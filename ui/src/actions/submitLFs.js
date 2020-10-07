@@ -1,5 +1,4 @@
 import axios from 'axios';
-import api from './api'
 import getStatistics from './getStatistics'
 
 
@@ -11,6 +10,7 @@ export const LF_STATS = "LF_STATS";
 export const LF_STATS_ERROR = "LF_STATS_ERROR";
 export const LF_LABEL_EXAMPLES = "LF_LABEL_EXAMPLES";
 
+const api = process.env.REACT_APP_SERVER;
 
 function allLFPending(data) {
     if (data) {
