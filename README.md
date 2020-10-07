@@ -63,7 +63,7 @@ functions for users to choose and refine from. Users also get continuous visual 
 By limiting users' task to simple annotation and selection from suggested rules, <br/>
 we allow fast exploration over the space of labeling functions.
  <br/>
-<img width=700px src=https://github.com/rulerauthors/ruler/blob/master/media/fast-exporation-thin.gif>
+<img width=700px src=media/fast-exporation-thin.gif>
 </h3>
 
 
