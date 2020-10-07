@@ -5,7 +5,7 @@ This repo contains the source code and the user evaluation data and analysis scr
 
 **Check out our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) to see Ruler in action on a spam classification task, or [try it yourself](http://54.83.150.235:3000/) on a sentiment analysis task.**
 
-You can also find the data from our user study <a href=https://github.com/rulerauthors/ruler/tree/master/user_study>here</a>, along with <a href=https://github.com/rulerauthors/ruler/blob/master/user_study/ruler_user_study_figures.ipynb>the code to generate all of our figures and analysis</a>. 
+You can also find the data from our user study <a href=https://github.com/megagonlabs/ruler/tree/master/user_study>here</a>, along with <a href=https://github.com/megagonlabs/ruler/blob/master/user_study/ruler_user_study_figures.ipynb>the code to generate all of our figures and analysis</a>. 
 
 <h3 align="center">
 <img width=800px src=media/ruler_teaser.gif>
@@ -63,7 +63,7 @@ functions for users to choose and refine from. Users also get continuous visual 
 By limiting users' task to simple annotation and selection from suggested rules, <br/>
 we allow fast exploration over the space of labeling functions.
  <br/>
-<img width=700px src=https://github.com/rulerauthors/ruler/blob/master/media/fast-exporation-thin.gif>
+<img width=700px src=media/fast-exporation-thin.gif>
 </h3>
 
 
@@ -88,7 +88,7 @@ We conducted a user study with 10 data scientists and measured their task perfor
 
 
 <h3> 
- The data from our user study is available <a href=https://github.com/rulerauthors/ruler/tree/master/user_study>here</a>, along with <a href=https://github.com/rulerauthors/ruler/blob/master/user_study/ruler_user_study_figures.ipynb>the code to generate all of our figures</a>. 
+ The data from our user study is available <a href=https://github.com/megagonlabs/ruler/tree/master/user_study>here</a>, along with <a href=https://github.com/megagonlabs/ruler/blob/master/user_study/ruler_user_study_figures.ipynb>the code to generate all of our figures</a>. 
 </h3>
 
 All participants had significant programming experience (avg=12.1 years, std=6.5). Their experience with Python programming ranged from 2 to 10 years with an average of 5.2 years (std=2.8).  
