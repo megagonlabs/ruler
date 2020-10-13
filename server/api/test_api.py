@@ -4,7 +4,7 @@ import time
 import unittest
 
 from api.dataset import Dataset
-from api.idea2 import *
+from api.api import *
 from verifier.labeling_function import LabelingFunction
 
 class apiTest(unittest.TestCase):
@@ -189,7 +189,7 @@ class apiTest(unittest.TestCase):
         select_dataset(d[0])
 
     def test_create_model(self):
-        create_new_model("test_model", {"POS": 1, "NEG": 0})
+        create_new_model("test_model")
         m = get_models()
         self.assertTrue("test_model" in m)
         select_model("test_model")

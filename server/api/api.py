@@ -192,6 +192,7 @@ def update_concept(cname: str, tokens: list):
     # update uuid on LFs that use this concept
     modeler.update_concept(cname)
     modeler.fit(project.train)
+    return project.concepts.get_elements(cname)
         
 
 def delete_concept(cname: str):
