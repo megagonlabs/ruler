@@ -232,6 +232,7 @@ class DataPreparer:
 
             longest_avg_string_col = max(obj_columns, key=lambda x: df[x].apply(lambda x: len(str(x))).mean())
             df = self.rename_column(longest_avg_string_col, 'text', df)
+            print(df)
 
         if 'label' in df.columns:
             return df

@@ -1,8 +1,8 @@
 swagger: "2.0"
 info:
-  description: This is the swagger file that goes with MegaMiner IDEA2 server code.
+  description: This page supports description and interaction with the API endpoints currently supported by Ruler. 
   version: "1.0.0"
-  title: IDEA2 API Specification
+  title: Ruler API Specification
 consumes:
   - application/json
 produces:
@@ -10,14 +10,35 @@ produces:
 
 basePath: /api
 
+tags:
+  - name: Project Management
+    description: manage data and models
+    externalDocs:
+      url: none
+  - name: Labelling Interaction
+    description: label and create functions
+  - name: Concept
+    description: update concepts and tokens
+  - name: GLL (Generalized Labeling Language)
+    description: get GLL keys and values
+  - name: Statistics
+    description: evaluate model performance.
+
 definitions:
   Condition:
     type: object
+    example: {"string": "(?:(?<=\\W)|(?<=^))(terrible)(?=\\W|$)", "token_text": "terrible", "type": 0, "case_sensitive": False}
     properties:
       string: 
         type: string
       type: 
         type: integer
+        enum: [0, 1, 2, 3]
+        description: The type of the condition. Available types can be fetched with a get request to \keytype
+      TYPE_:
+        type: string
+        enum: ['TOKEN','REGEXP','CONCEPT','NER']
+        description: String description of the condition type
       case_sensitive: 
         type: boolean
   Instance:
@@ -45,6 +66,17 @@ definitions:
       $ref: '#/definitions/Condition'
   Annotation:
     type: object
+    example: [
+                {
+                    "id":85,
+                    "label":0,
+                    "start_offset":85,
+                    "end_offset":92,
+                    "text":"a while",
+                    "link": None,
+                    "type":"annotation"
+                }
+            ]
     properties:
       end_offset:
         type: integer
@@ -335,6 +367,9 @@ paths:
       responses:
         200:
           description: OK
+          schema:
+            $ref: '#/definitions/Tokens'
+            description: List of tokens and their keytypes that belong to the updated concept
     delete:
       operationId: idea2.delete_concept
       tags:
