@@ -1,7 +1,6 @@
 # RULER: Data Programming by Demonstration for Text 
  
-This repo contains the source code and the user evaluation data and analysis scripts for Ruler, a data programming by interactive demonstration system for document labeling. Ruler synthesizes labeling rules using span-level annotations that  represent users’ rationales or explanations for their labeling decisions on document examples (see our [EMNLP'20 submission](media/Ruler_EMNLP2020.pdf) for details). 
-
+This repo contains the source code and the user evaluation data and analysis scripts for Ruler, a data programming by demonstration system for document labeling. Ruler synthesizes labeling rules using span-level annotations that  represent users’ rationales or explanations for their labeling decisions on document examples (see our [Findings of EMNLP'20 publication](media/Ruler_EMNLP2020.pdf) for details). 
 
 **Check out our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) to see Ruler in action on a spam classification task, or [try it yourself](http://54.83.150.235:3000/) on a sentiment analysis task.**
 
@@ -13,9 +12,10 @@ You can also find the data from our user study <a href=https://github.com/megago
 
 1. [What is Data Programming by Demonstration? (DPBD)](#DPBD)
 2. [Ruler: DPBD for Text](#Ruler)
-3. [How to Use the Source Code in This Repo](#Use)
+3. [How to Run the Source Code in This Repo](#Use)
    - [Engine](#Engine)
    - [User Interface](#UI)
+4. [Using Ruler: the Basics](#Basics)
 
 
 ## <a name='DPBD'></a>What is Data Programming by Demonstration (DPBD)?
@@ -80,7 +80,7 @@ we allow fast exploration over the space of labeling functions.
   :x: how to formalize their intuition
   
   
-# <a name='Use'></a>How to use the source code in this repo
+# <a name='Use'></a>How to run the source code in this repo
 
 Follow these instructions to run the system on your own, where you can plug in your own data and save the resulting labels, models, and annotations.
 
@@ -95,50 +95,17 @@ cd server
 pip install -r requirements.txt
 ```
 
-### 2. Upload Data :memo:
 
-To run the Youtube Spam Classification task shown in the demo, download the data files [here](https://www.kaggle.com/goneee/youtube-spam-classifiedcomments) and place them under `data/`.
-There should be five files.
-
- __Want to use Another Dataset?__ 
-
- Open `server/api/idea2.py`. 
- You'll want to replace `load_youtube_dataset` with your own function. 
- The return value of this function should be 4 [pandas DataFrames](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html) (training, development, validation, and test sets).  
- 
- Your dataframes must have:
-  - A `label` column: an integer value describing which class the example belongs to. (The training dataframe doesn't need this column).
-  - A `text` column: the text to be annotated.
-  - A unique [index](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Index.html?highlight=index#pandas.Index). You can use the `[reset_index](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.reset_index.html)` function to do this.
- 
-For an example, see `server/data/preparer.py`.
-
-In `server/api/idea2.py`, you should also change the variables `MODE` and `USER` to something descriptive. This will dictate the directory where your models are saved, should you choose to save them.
-
-### 3. Run :runner:
+### 2. Run :runner:
 
 ```
 python api/server.py
 ```
 
-Open your browser, and got to http://localhost:5000/api/ui
+Now the engine is running. To use Ruler, you will need to run the UI as well, described below.
 
+You can check out http://localhost:5000/api/ui to see the supported endpoints.
 This will display a [Swagger UI](https://swagger.io/tools/swagger-ui/) page that allows you to interact directly with the API.
-
-### 4. Save Your Model (Optional) :floppy_disk:
-
-Via Ruler UI: 
-
-Click the save button in the top right corner.
-
-
-Via the API :
-
-Submit a post request to `http://localhost:5000/save`. 
-
-
-The snorkel model, concepts, labelling function history, and interaction history will all be in the directory `<USER>/<MODE>`.
-By default this is `guest/Youtube`.
 
 
 ## <a name='UI'></a>User Interface
@@ -164,5 +131,54 @@ By default, the app will make calls to `localhost:5000`, assuming that you have 
 
 Once you have both of these running, navigate to `localhost:3000`.
 
-**You can also try our live demo [here](http://54.83.150.235:3000).**
 
+# <a name='Basics'></a>Using Ruler: the Basics
+
+Congrats, you've got Ruler running! 🎉
+
+### Create/Load a Project
+
+When you navigate to `localhost:3000`, you will be guided through the process of initializing your project.
+
+1. Upload data. 
+There is some example data under (server/datasets/spam_example/processed.csv)[server/datasets/spam_example/processed.csv]. 
+You can also upload your own data here, just make sure it's a valid csv file, and your text column is labeled `text`.  If you have labels you want to use for development, these should be in a column named `labels`. Ruler will automatically split your data into training (the data you interactively label), development (the data your functions are evaluated on), and test/validation (to evaluate the end model).
+
+2. Create/load a model. 
+If you're iterating on a model you've previously saved, you can load it here. Otherwise, enter a name for your new model, and you will define the label classes in the next step.
+
+3. Define Labels.
+__WARNING__ your label classes need to match the data you've uploaded. If you're dataset has labels `{0: NON-SPAM, 1: SPAM}` then you need to add the labels in this order to make sure they're mapped correctly.
+If you're loading a previous model, make sure these label classes match the dataset.
+
+4. Continue to Project.
+You should automatically be redirected to `localhost:3000/project` once your data is pre-processed.
+
+
+Need some ideas? Try sentiment classification on this (Amazon Review dataset)[https://www.kaggle.com/bittlingmayer/amazonreviews].
+Upload this dataset, create a new model, define the labels `NON-SPAM` and `SPAM`, and get labelling.
+
+
+### Get Labeling
+
+Now you're at `localhost:3000/project`, where the magic happens. 
+
+<h3 align="center">
+<img width=800px src=media/ruler_ui.png>
+</h3>
+
+__A/B__  Highlight parts of the text, add links between them, or create concepts to annotate the data. 
+
+__C__ Once you select a label class, Ruler will automatically suggest functions for you. Select and submit the ones you like.
+
+__D__ Your label model performance will update as you go, showing changes with each addition/deletion of a function.
+
+__E__ If you want to evaluate a model trained on your generated labels, click the refresh icon in this panel. This will train a logistic regression model on bag of words features and report the performance. You should use this sparingly to avoid overfitting to the test set. Note that this is a very simplistic model which may not be suitable for evaluating labels for some tasks.
+
+__F__ Here, you can inspect individual functions' performance, and deactivate them.
+
+See our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) for some example interactions.
+
+### Finished?
+
+Save your model by clicking the icon on the top right. If you decide to iterate on it more later, you can load it on the create/load project page.
