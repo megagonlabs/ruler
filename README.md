@@ -1,21 +1,23 @@
 # RULER: Data Programming by Demonstration for Text 
  
-This repo contains the source code and the user evaluation data and analysis scripts for Ruler, a data programming by demonstration system for document labeling. Ruler synthesizes labeling functions based on your span-level annotations, allowing you to quickly and easily generate large amounts of training data.
+This repo contains the source code and the user evaluation data and analysis scripts for Ruler, a data programming by demonstration system for document labeling. 
+
 
 <h3 align="center">
+ Ruler synthesizes labeling functions based on your span-level annotations, allowing you to quickly and easily generate large amounts of training data for text classification, without the need to program. <br/>
 <img width=800px src=media/ruler_teaser.gif>
 </h3>
 
-**Check out our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) to see Ruler in action on a spam classification task, or [try it yourself](http://54.83.150.235:3000/) on a sentiment analysis task.**
+Check out our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) to see Ruler in action on a spam classification task, or [try it yourself](http://54.83.150.235:3000/) on a sentiment analysis task.
 
-
-1. [What is Ruler](#ruler)
+## Table of Contents
+1. [What is Ruler?](#ruler)
 2. [How to Run the Source Code in This Repo](#Use)
    - [Engine](#Engine)
    - [User Interface](#UI)
 3. [Using Ruler: the Basics](#Basics)
 4. [For Researchers](#research)
-5. [Contact](#Contact)
+5. [Contact](#contact)
 
 
 ## <a name='ruler'></a>What is Ruler?
@@ -29,7 +31,7 @@ incorporating their domain knowledge to label a subset of a large training datas
 
 This approach has a few drawbacks, however. Many domain experts lack programming expertise, but it would still be useful to translate their knowledge into functions. For example, training models for the medical domain requires volumes of high-accuracy training data, but the medical experts' time is very valuable, limiting the amount of time they can spend labeling. Even for domain experts who are proficient programmers, it is often difficult to convert domain knowledge to a set of rules. 
 
-The accessibility of writing labeling functions is a challenge for wider adoption of data programming. To address this challenge, we introduce a new framework, __Data Programming by Demonstration (DPBD)__, to synthesize labeling functions through user interactions.
+In short, the accessibility of writing labeling functions is a challenge to wider adoption of data programming. To address this challenge, we introduce a new framework, __Data Programming by Demonstration (DPBD)__, to synthesize labeling functions through user interactions.
 
 <h3 align="center">
 <img  align="center" width="900" src="media/overview.png" />
@@ -42,6 +44,7 @@ DPBD aims to move the burden of writing labeling functions to an intelligent syn
 
 <h3 align="center">
 <img width=800px src=media/ruler_teaser_wide.png>
+ <br/>An overview of the Ruler workflow. The user iteratively annotates and labels text, selects functions from those Ruler generates, and gets feedback on the performance of the set of labeling functions they have selected.
 </h3>
 
 For example, consider a sentiment classification task. A labeling function might look something like this Python code:
