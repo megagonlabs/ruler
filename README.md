@@ -1,14 +1,24 @@
 # RULER: Data Programming by Demonstration for Text 
  
-This repo contains the source code and the user evaluation data and analysis scripts for Ruler, a data programming by demonstration system for document labeling. Ruler synthesizes labeling rules using span-level annotations that  represent users’ rationales or explanations for their labeling decisions on document examples (see our [Findings of EMNLP'20 publication](media/Ruler_EMNLP2020.pdf) for details). 
-
-**Check out our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) to see Ruler in action on a spam classification task, or [try it yourself](http://54.83.150.235:3000/) on a sentiment analysis task.**
-
-You can also find the data from our user study <a href=https://github.com/megagonlabs/ruler/tree/master/user_study>here</a>, along with <a href=https://github.com/megagonlabs/ruler/blob/master/user_study/ruler_user_study_figures.ipynb>the code to generate all of our figures and analysis</a>. 
+This repo contains the source code and the user evaluation data and analysis scripts for Ruler, a data programming by demonstration system for document labeling. Ruler synthesizes labeling functions based on your span-level annotations. This allows users to quickly and easily generate large amounts of training data.
 
 <h3 align="center">
 <img width=800px src=media/ruler_teaser.gif>
 </h3>
+
+For example, a labeling function for sentiment classification might look something like this Python code:
+```
+def find_positive_adj(text):
+    if "awesome" in text or "great" in text:
+        return POSITIVE
+    else:
+        return NEGATIVE
+```
+Instead of formalizing this function as Python code, a user can use Ruler to annotate the words "awesome" and "great" to get the same function. Ruler functions can also make use of word co-occurence, named entities, and more.
+Once the user is satisfied with the functions they've created using Ruler, these functions are aggregated using [Snorkel](https://www.snorkel.org/), which denoises the resulting label model. With this model, the user can label as much training data as they would like, and use it to train a more sophisticated supervised model.
+
+**Check out our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) to see Ruler in action on a spam classification task, or [try it yourself](http://54.83.150.235:3000/) on a sentiment analysis task.**
+
 
 1. [What is Data Programming by Demonstration? (DPBD)](#DPBD)
 2. [Ruler: DPBD for Text](#Ruler)
@@ -16,7 +26,8 @@ You can also find the data from our user study <a href=https://github.com/megago
    - [Engine](#Engine)
    - [User Interface](#UI)
 4. [Using Ruler: the Basics](#Basics)
-5. [Contact](#Contact)
+5. [For Researchers](#research)
+6. [Contact](#Contact)
 
 
 ## <a name='DPBD'></a>What is Data Programming by Demonstration (DPBD)?
@@ -183,6 +194,14 @@ See our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dO
 ### Finished?
 
 Save your model by clicking the icon on the top right. If you decide to iterate on it more later, you can load it on the create/load project page.
+
+
+
+# <a name='research'></a>For Researchers
+
+<a href=https://github.com/megagonlabs/ruler/tree/master/user_study>Here you can find the data from our user study</a>, along with <a href=https://github.com/megagonlabs/ruler/blob/master/user_study/ruler_user_study_figures.ipynb>the code to generate all of our figures and analysis</a>. 
+
+Please see our [Findings of EMNLP'20 publication](media/Ruler_EMNLP2020.pdf) for details. 
 
 # <a name='contact'></a>Contact
 If you have any problems, please feel free to create a Github issue. 
