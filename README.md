@@ -16,6 +16,7 @@ You can also find the data from our user study <a href=https://github.com/megago
    - [Engine](#Engine)
    - [User Interface](#UI)
 4. [Using Ruler: the Basics](#Basics)
+5. [Contact](#Contact)
 
 
 ## <a name='DPBD'></a>What is Data Programming by Demonstration (DPBD)?
@@ -182,3 +183,9 @@ See our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dO
 ### Finished?
 
 Save your model by clicking the icon on the top right. If you decide to iterate on it more later, you can load it on the create/load project page.
+
+# <a name='contact'></a>Contact
+If you have any problems, please feel free to create a Github issue. 
+
+For other inquiries, contact <sara@megagon.ai>.
+
