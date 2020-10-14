@@ -1,36 +1,24 @@
 # RULER: Data Programming by Demonstration for Text 
  
-This repo contains the source code and the user evaluation data and analysis scripts for Ruler, a data programming by demonstration system for document labeling. Ruler synthesizes labeling functions based on your span-level annotations. This allows users to quickly and easily generate large amounts of training data.
+This repo contains the source code and the user evaluation data and analysis scripts for Ruler, a data programming by demonstration system for document labeling. Ruler synthesizes labeling functions based on your span-level annotations, allowing you to quickly and easily generate large amounts of training data.
 
 <h3 align="center">
 <img width=800px src=media/ruler_teaser.gif>
 </h3>
 
-For example, a labeling function for sentiment classification might look something like this Python code:
-```
-def find_positive_adj(text):
-    if "awesome" in text or "great" in text:
-        return POSITIVE
-    else:
-        return NEGATIVE
-```
-Instead of formalizing this function as Python code, a user can use Ruler to annotate the words "awesome" and "great" to get the same function. Ruler functions can also make use of word co-occurence, named entities, and more.
-Once the user is satisfied with the functions they've created using Ruler, these functions are aggregated using [Snorkel](https://www.snorkel.org/), which denoises the resulting label model. With this model, the user can label as much training data as they would like, and use it to train a more sophisticated supervised model.
-
 **Check out our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) to see Ruler in action on a spam classification task, or [try it yourself](http://54.83.150.235:3000/) on a sentiment analysis task.**
 
 
-1. [What is Data Programming by Demonstration? (DPBD)](#DPBD)
-2. [Ruler: DPBD for Text](#Ruler)
-3. [How to Run the Source Code in This Repo](#Use)
+1. [What is Ruler](#ruler)
+2. [How to Run the Source Code in This Repo](#Use)
    - [Engine](#Engine)
    - [User Interface](#UI)
-4. [Using Ruler: the Basics](#Basics)
-5. [For Researchers](#research)
-6. [Contact](#Contact)
+3. [Using Ruler: the Basics](#Basics)
+4. [For Researchers](#research)
+5. [Contact](#Contact)
 
 
-## <a name='DPBD'></a>What is Data Programming by Demonstration (DPBD)?
+## <a name='ruler'></a>What is Ruler?
 
 The success of machine learning has dramatically increased the demand for high-quality labeled data---but this data is 
 expensive to obtain, which inhibits broader utilization of machine learning models outside resource rich settings. 
@@ -39,10 +27,9 @@ comes in. Data programming aims to address the difficulty of collecting labeled 
 programmatic approach to weak supervision, where domain (subject-matter) experts are expected to provide functions
 incorporating their domain knowledge to label a subset of a large training dataset. 
 
-Writing data programs or labeling functions can be, however, challenging. Most domain experts or lay users do not 
-have programming literacy. Crucially, it is often difficult to convert domain knowledge to a set of rules 
-through enumeration even for those who are proficient programmers. The accessibility of writing labeling functions is a 
-challenge for wider adoption of data programming.
+This approach has a few drawbacks, however. Many domain experts lack programming expertise, but it would still be useful to translate their knowledge into functions. For example, training models for the medical domain requires volumes of high-accuracy training data, but the medical experts' time is very valuable, limiting the amount of time they can spend labeling. Even for domain experts who are proficient programmers, it is often difficult to convert domain knowledge to a set of rules. 
+
+The accessibility of writing labeling functions is a challenge for wider adoption of data programming. To address this challenge, we introduce a new framework, __Data Programming by Demonstration (DPBD)__, to synthesize labeling functions through user interactions.
 
 <h3 align="center">
 <img  align="center" width="900" src="media/overview.png" />
@@ -51,23 +38,24 @@ knowledge, and dashed lines indicate the flow of data.
 <br/>
 </h3>
 
-To address this challenge, we introduce a new framework, __Data Programming by 
-Demonstration (DPBD)__, to synthesize labeling functions through user interactions. DPBD aims to move the burden of 
-writing labeling functions to an intelligent synthesizer while enabling users to steer the synthesis process at multiple
-semantic levels, from providing rationales relevant for their labeling choices to interactively
-filtering the proposed functions.  As a result, DBPB allows users to interactively label few examples 
-to demonstrate what labeling functions should do, instead of manually writing these functions. 
-
-## <a name='Ruler'></a>Ruler: DPBD for Text
+DPBD aims to move the burden of writing labeling functions to an intelligent synthesizer while enabling users to steer this synthesis. Ruler is an interactive tool that operationalizes data programming by demonstration for document text.
 
 <h3 align="center">
 <img width=800px src=media/ruler_teaser_wide.png>
 </h3>
 
-Ruler is an interactive tool that operationalizes data programming by demonstration for document text. To that end, it 
-enables users to effectively sample (navigate) examples using active learning and label these examples while expressing  
-the rationales for labels by interactively annotating spans and their relations. Ruler then  automatically suggests labeling 
-functions for users to choose and refine from. Users also get continuous visual feedback about how their labeling functions are performing.
+For example, consider a sentiment classification task. A labeling function might look something like this Python code:
+```
+def find_positive_adj(text):
+    if "awesome" in text or "great" in text:
+        return POSITIVE
+    else:
+        return NEGATIVE
+```
+Instead of formalizing this function as Python code, a user can use Ruler to annotate the words "awesome" and "great" to get the same function. This is the "demonstration" part of DPBD.  Ruler functions can also make use of word co-occurence, named entities, and more.
+
+Once the user is satisfied with the functions they've created using Ruler, these functions are aggregated using [Snorkel](https://www.snorkel.org/), which denoises the resulting label model. With this model, the user can label as much training data as they would like, and use it to train a more sophisticated supervised model.
+
 
 <h3 align="center">
 By limiting users' task to simple annotation and selection from suggested rules, <br/>
