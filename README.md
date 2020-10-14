@@ -13,7 +13,6 @@ You can also find the data from our user study <a href=https://github.com/megago
 
 1. [What is Data Programming by Demonstration? (DPBD)](#DPBD)
 2. [Ruler: DPBD for Text](#Ruler)
-3. [Evaluation of Ruler](#Eval)
 3. [How to Use the Source Code in This Repo](#Use)
    - [Engine](#Engine)
    - [User Interface](#UI)
@@ -26,10 +25,9 @@ expensive to obtain, which inhibits broader utilization of machine learning mode
 That's where data programming [[1](https://arxiv.org/pdf/1605.07723.pdf), [2](https://arxiv.org/pdf/1711.10160.pdf)] 
 comes in. Data programming aims to address the difficulty of collecting labeled data using a 
 programmatic approach to weak supervision, where domain (subject-matter) experts are expected to provide functions
-incorporating their domain knowledge to label a subset of a large training dataset. Since these labeling functions
-may overlap or conflict with each other, they are denoised (i.e., the optimum corresponding weights are learned)
-using inference over a generative graphical model. The denoised functions are then applied to the large unlabeled 
-dataset to obtain probabilistic labels and train standard machine learning models in a noise-aware manner. Writing data programs or labeling functions can be, however, challenging. Most domain experts or lay users do not 
+incorporating their domain knowledge to label a subset of a large training dataset. 
+
+Writing data programs or labeling functions can be, however, challenging. Most domain experts or lay users do not 
 have programming literacy. Crucially, it is often difficult to convert domain knowledge to a set of rules 
 through enumeration even for those who are proficient programmers. The accessibility of writing labeling functions is a 
 challenge for wider adoption of data programming.
@@ -82,35 +80,6 @@ we allow fast exploration over the space of labeling functions.
   :x: how to formalize their intuition
   
   
-## <a name='Eval'></a>Evaluation
-
-We conducted a user study with 10 data scientists and measured their task performance accuracy in completing two prevalent labeling tasks: spam detection and sentiment classification.  They performed these two tasks on  [YouTube Comments](https://archive.ics.uci.edu/ml/datasets/YouTube+Spam+Collection) and [Amazon Reviews](https://www.kaggle.com/bittlingmayer/amazonreviews), respectively. In addition to task performance, we also analyzed the accessibility and  expressivity of both methods using the qualitative feedback elicited from participants and our observations gathered during the study sessions. 
-
-
-<h3> 
- The data from our user study is available <a href=https://github.com/megagonlabs/ruler/tree/master/user_study>here</a>, along with <a href=https://github.com/megagonlabs/ruler/blob/master/user_study/ruler_user_study_figures.ipynb>the code to generate all of our figures</a>. 
-</h3>
-
-All participants had significant programming experience (avg=12.1 years, std=6.5). Their experience with Python programming ranged from 2 to 10 years with an average of 5.2 years (std=2.8).  
-
-We find that Ruler and Snorkel provide comparable model performances (see figure below). The logistic regression models trained on data produced by labeling models created using Ruler have slightly higher f1 (W=35, p=0.49, r=0.24 ), precision (W=30, p=0.85, r=0.08), and recall (W=25, p=0.85, r=0.08) scores on average. Conversely, accuracy is slightly higher (W=17, p=0.32, r=0.15) for Snorkel models on average than Ruler. However these differences are not statistically significant. 
-
-<h3 align="center">
-<img width=800px src=media/quantitative.png>
-<br />  Ruler and Snorkel provide comparable model performances
-</h3>
-
-
-Participants find Ruler to be significantly easier to use 
-(W=34, p=0.03 < 0.05, r=0.72) than Snorkel. 
-Similarly, they consider Ruler easier to learn (W=30, p=0.1, r=0.59) than Snorkel.  On the other hand, as we expected, participants report Snorkel to be more expressive (W=0, p=0.05, r=0.70)  than  Ruler. However, our participants appear to consider accessibility (ease of use and ease of learning) to be more important criteria, rating Ruler higher (W=43, p=0.12, r=0.51) than Snorkel for overall satisfaction.  
-
-
-<h3 align="center">
-<img width=800px src=media/qualitative.png>
-<br/>Participants' subjective ratings on ease of use, expressivity, ease of learning and overall satisfaction, on a 5-point Likert scale. 
-</h3>
-
 # <a name='Use'></a>How to use the source code in this repo
 
 Follow these instructions to run the system on your own, where you can plug in your own data and save the resulting labels, models, and annotations.
