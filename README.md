@@ -34,7 +34,7 @@ This approach has a few drawbacks, however. Many domain experts lack programming
 In short, the accessibility of writing labeling functions is a challenge to wider adoption of data programming. To address this challenge, we introduce a new framework, __Data Programming by Demonstration (DPBD)__, to synthesize labeling functions through user interactions.
 
 <h3 align="center">
-<img  align="center" width="900" src="media/overview.png" />
+<img  align="center" width="900" src="media/overview.png" /><br/>
 Overview of the data programming by demonstration (DPBD) framework. Straight lines indicate the flow of domain
 knowledge, and dashed lines indicate the flow of data.
 <br/>
@@ -44,7 +44,7 @@ DPBD aims to move the burden of writing labeling functions to an intelligent syn
 
 <h3 align="center">
 <img width=800px src=media/ruler_teaser_wide.png>
- <br/>An overview of the Ruler workflow. The user iteratively annotates and labels text, selects functions from those Ruler generates, and gets feedback on the performance of the set of labeling functions they have selected.
+ <br/>An overview of the Ruler workflow. The user iteratively annotates and labels text, selects functions from those Ruler generates, and gets feedback on the performance of the set of labeling functions they have selected.<br/>
 </h3>
 
 For example, consider a sentiment classification task. A labeling function might look something like this Python code:
