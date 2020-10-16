@@ -91,6 +91,8 @@ Follow these instructions to run the system on your own, where you can plug in y
 
 The server runs on [Flask](https://flask.palletsprojects.com/en/1.1.x/) and can be found in [`server/`](server/). 
 
+It is strongly reccomended that you use Python version 3.6
+
 ### 1. Install Dependencies :wrench:
 
 ```shell
