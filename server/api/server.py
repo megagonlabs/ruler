@@ -3,6 +3,8 @@ Main module of the server file
 """
 
 import connexion
+
+from flask import redirect
 from flask import render_template
 from flask_cors import CORS
 
@@ -25,7 +27,9 @@ def home():
 
     :return:        the rendered templates "home.html"
     """
-    return render_template("home.html")
+    return redirect("/api/ui", code=302)
+
+
 
 if __name__ == "__main__":
     try:
