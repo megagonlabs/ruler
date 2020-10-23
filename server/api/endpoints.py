@@ -82,6 +82,8 @@ def listdir(dirname: str):
             return True
         if file.endswith(".zip"):
             return True
+        if file.endswith(".md"):
+            return True
         return False
     return sorted([f for f in os.listdir(dirname) if not should_ignore(f)], key=lambda f: f.lower())
 
