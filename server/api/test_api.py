@@ -4,7 +4,7 @@ import time
 import unittest
 
 from api.dataset import Dataset
-from api.api import *
+from api.endpoints import *
 from verifier.labeling_function import LabelingFunction
 
 class apiTest(unittest.TestCase):

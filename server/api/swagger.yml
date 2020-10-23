@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  description: This page supports description and interaction with the API endpoints currently supported by Ruler. 
+  description: This page supports description and interaction with the API currently supported by Ruler. 
   version: "1.0.0"
   title: Ruler API Specification
 consumes:
@@ -88,7 +88,7 @@ definitions:
 paths:
   /models:
     post:
-      operationId: idea2.select_model
+      operationId: endpoints.select_model
       tags:
         - Project Management
       summary: Select a model for this project
@@ -108,7 +108,7 @@ paths:
           schema:
             type: object
     get:
-      operationId: idea2.get_models
+      operationId: endpoints.get_models
       tags:
         - Project Management
       summary: View available Ruler models
@@ -122,7 +122,7 @@ paths:
 
   /models/{model_name}:
     post:
-      operationId: idea2.create_new_model
+      operationId: endpoints.create_new_model
       tags:
         - Project Management
       summary: Create a new Ruler model
@@ -140,7 +140,7 @@ paths:
 
   /datasets:
     get:
-      operationId: idea2.get_datasets
+      operationId: endpoints.get_datasets
       tags:
         - Project Management
       summary: View available datasets
@@ -152,7 +152,7 @@ paths:
             items:
               type: string
     post:
-      operationId: idea2.select_dataset
+      operationId: endpoints.select_dataset
       tags:
         - Project Management
       summary: Select a dataset for this project
@@ -174,7 +174,7 @@ paths:
 
   /datasets/{dataset_uuid}:
     post:
-      operationId: idea2.post_data
+      operationId: endpoints.post_data
       tags:
         - Project Management
       summary: Upload a new dataset
@@ -197,7 +197,7 @@ paths:
             items:
               type: string
     get:
-      operationId: idea2.get_dataset
+      operationId: endpoints.get_dataset
       tags:
         - Project Management
       summary: View files in a dataset
@@ -217,7 +217,7 @@ paths:
 
   /datasets/{dataset_uuid}/status:
     get:
-      operationId: idea2.progress
+      operationId: endpoints.progress
       tags:
         - Project Management
       summary: get status of dataset preparation
@@ -235,7 +235,7 @@ paths:
 
   /label:
     get:
-      operationId: idea2.get_labels
+      operationId: endpoints.get_labels
       tags:
         - GLL (Generalized Labeling Language)
       summary: Get pre-defined labels
@@ -247,7 +247,7 @@ paths:
             additionalProperties:
               type: integer
     post:
-      operationId: idea2.post_labels
+      operationId: endpoints.post_labels
       tags:
         - Project Management
       summary: Define labels for a task
@@ -265,7 +265,7 @@ paths:
 
   /connective:
     get:
-      operationId: idea2.get_connective
+      operationId: endpoints.get_connective
       tags:
         - GLL (Generalized Labeling Language)
       summary: Get pre-defined connective definition
@@ -280,7 +280,7 @@ paths:
 
   /keytype:
     get:
-      operationId: idea2.get_keytype
+      operationId: endpoints.get_keytype
       tags:
         - GLL (Generalized Labeling Language)
       summary: Get pre-defined key types
@@ -295,7 +295,7 @@ paths:
 
   /concept:
     get:
-      operationId: idea2.get_all_concepts
+      operationId: endpoints.get_all_concepts
       tags:
         - Concept
       summary: Get all existing concepts
@@ -307,7 +307,7 @@ paths:
             additionalProperties:
               type: array
     post:
-      operationId: idea2.create_concept
+      operationId: endpoints.create_concept
       tags:
         - Concept
       summary: Create a concept
@@ -331,7 +331,7 @@ paths:
 
   /concept/{cname}:
     get:
-      operationId: idea2.get_concept
+      operationId: endpoints.get_concept
       tags:
         - Concept
       summary: Get the tokens from one concept
@@ -348,7 +348,7 @@ paths:
             $ref: '#/definitions/Tokens'
             description: List of tokens and their keytypes that belong to the requested concept
     put:
-      operationId: idea2.update_concept
+      operationId: endpoints.update_concept
       tags:
         - Concept
       summary: Update tokens of existing concept
@@ -371,7 +371,7 @@ paths:
             $ref: '#/definitions/Tokens'
             description: List of tokens and their keytypes that belong to the updated concept
     delete:
-      operationId: idea2.delete_concept
+      operationId: endpoints.delete_concept
       tags:
        - Concept
       summary: Delete an existing concept
@@ -387,7 +387,7 @@ paths:
 
   /interaction:
     get:
-      operationId: idea2.next_text
+      operationId: endpoints.next_text
       tags:
         - Labelling Interaction
       summary: Get next text to label, possibly with annotations
@@ -406,7 +406,7 @@ paths:
               index:
                 type: integer
     post:
-      operationId: idea2.submit_interaction
+      operationId: endpoints.submit_interaction
       tags:
         - Labelling Interaction
       summary: Submit the labeled text from the user
@@ -444,7 +444,7 @@ paths:
             items:
               $ref: '#/definitions/Instance'
     put:
-      operationId: idea2.submit_instances
+      operationId: endpoints.submit_instances
       tags:
         - Labelling Interaction
       summary: Submit the user selected LF explanation
@@ -463,7 +463,7 @@ paths:
 
   /interaction/{idx}:
     get:
-      operationId: idea2.get_interaction_idx
+      operationId: endpoints.get_interaction_idx
       tags:
         - Labelling Interaction
       summary: Get the previous interaction from history
@@ -500,7 +500,7 @@ paths:
 
   /statistics:
     get:
-      operationId: idea2.get_stats
+      operationId: endpoints.get_stats
       tags:
         - Statistics
       summary: Get the current quality statistics
@@ -531,7 +531,7 @@ paths:
                 description: Count of interaction rounds
   /lr_statistics:
     get:
-      operationId: idea2.get_logreg_stats
+      operationId: endpoints.get_logreg_stats
       tags:
         - Statistics
       summary: Get the current quality statistics of an LR model trained on your labels
@@ -556,7 +556,7 @@ paths:
 
   /labelingfunctions:
     get:
-      operationId: idea2.get_lf_stats
+      operationId: endpoints.get_lf_stats
       tags:
         - Statistics
       summary: Get the current LF statistics
@@ -566,7 +566,7 @@ paths:
           schema:
             type: object  
     put:
-      operationId: idea2.delete_lfs
+      operationId: endpoints.delete_lfs
       tags:
        - Statistics
       summary: Delete a previous LF
@@ -584,7 +584,7 @@ paths:
           description: OK
   /labelingfunctions/{lf_id}:
     get:
-      operationId: idea2.get_lf_label_examples
+      operationId: endpoints.get_lf_label_examples
       tags:
         - Statistics
       summary: Get examples of text labeled by the given labeling function
@@ -635,7 +635,7 @@ paths:
 
   /save:
     post:
-      operationId: idea2.upload_model
+      operationId: endpoints.upload_model
       tags:
         -  Project Management
       summary: Upload the interactions, labeling functions, and model to google drive.
@@ -656,7 +656,7 @@ paths:
           schema:
             type: object  
     get:
-      operationId: idea2.download_model
+      operationId: endpoints.download_model
       tags:
         -  Project Management
       summary: Save the interactions, labeling functions, and model to disk and send to browser
