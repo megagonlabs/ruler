@@ -89,4 +89,5 @@ snorkel.db
 *.pkl
 *.csv
 *.zip
+*.pyc
 *.txt

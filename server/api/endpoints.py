@@ -82,6 +82,8 @@ def listdir(dirname: str):
             return True
         if file.endswith(".zip"):
             return True
+        if file.endswith(".md"):
+            return True
         return False
     return sorted([f for f in os.listdir(dirname) if not should_ignore(f)], key=lambda f: f.lower())
 
@@ -192,6 +194,7 @@ def update_concept(cname: str, tokens: list):
     # update uuid on LFs that use this concept
     modeler.update_concept(cname)
     modeler.fit(project.train)
+    return project.concepts.get_elements(cname)
         
 
 def delete_concept(cname: str):
