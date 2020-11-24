@@ -19,10 +19,10 @@ build: venv
 test: venv
 	cd server; $(PYTHON) -m unittest discover
 
-server: venv
+server: venv FORCE
 	cd server; $(PYTHON) api/server.py
 
-ui: venv
+ui: venv FORCE
 	cd ui; npm start
 
 gitclean:
