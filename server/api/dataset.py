@@ -5,13 +5,11 @@ import pandas as pd
 from snorkel.labeling import PandasLFApplier
 from synthesizer.parser import nlp
 
-
-DATASETS_PATH = 'datasets/'
-PROCESSED_FILE_NAME = 'processed.csv'
+from config import DATASETS_PATH
+from config import DEFAULT_MAX_TRAINING_SIZE
+from config import MIN_LABELLED_SIZE
 
 ALLOWED_EXTENSIONS = {'csv'}
-MIN_LABELLED_SIZE = 20
-DEFAULT_MAX_TRAINING_SIZE = 3000
 
 def allowed_file(filename: str):
     return '.' in filename and \
@@ -40,7 +38,17 @@ class Dataset:
         df['seen'] = 0
         return Dataset(df)
 
-    def save(self, path):
+    def save(self, path, y=None):
+        """Save the dataset to a file, with versioning.
+        
+        Args:
+            path (string): path to file
+            y (matrix, optional): Model predictions. If passed, they will be saved with the data.
+        """
+        if y is not None:
+            for i in range(len(y)):
+                self.df["pred_{}".format(i)] = y[:,i]
+        print(self.df.head())
         self.df.to_csv(path)
 
     def apply_lfs(self, lfs: list):
