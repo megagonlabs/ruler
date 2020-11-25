@@ -11,6 +11,7 @@ from api.dataset import allowed_file
 from api.dataset import DATASETS_PATH
 from api.dataset import DataPreparer
 from api.dataset import Dataset
+from api.version_file import VersionFile
 from synthesizer.gll import ConceptWrapper
 from synthesizer.gll import DELIMITER
 from synthesizer.gll import Label
@@ -135,6 +136,23 @@ class Project:
         self.modeler.save(path)
         self.labels.save(os.path.join(path, "labels.json"))
         self.concepts.save(os.path.join(path, "concept_collection.json"))
+        self.save_datasets()
+
+    def save_datasets(self):
+        for dset_name in ["train", "dev", "test", "valid"]:
+            if self.__hasattr__(dset_name):
+                dset = self.__get__(dset_name)
+                logging.info("[DATA] {} dataset save success")
+                probabilistic_labels = self.modeler.predict(dset)
+
+                path = os.path.join(DATASETS_PATH, self.name)
+                # add datetime to file name (version control)
+                path = VersionFile(path)
+                dset.save(path=path, y=probabilistic_labels)
+
+            else:
+                logging.info("[DATA] {} dataset save failed (dataset not found)".format(dset_name))
+
 
     def load_model(self, path):
         self.modeler = Modeler.load(path)
