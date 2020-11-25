@@ -634,27 +634,6 @@ paths:
                       description: The annotations by this function over the text
 
   /save:
-    post:
-      operationId: endpoints.upload_model
-      tags:
-        -  Project Management
-      summary: Upload the interactions, labeling functions, and model to google drive.
-      parameters:
-        - name: data
-          in: body
-          description: info about how/where to save the model
-          required: true
-          schema:
-            type: object
-            properties:
-              dirname:
-                type: string
-                description: name of the directory to store model in
-      responses:
-        200:
-          description: OK  
-          schema:
-            type: object  
     get:
       operationId: endpoints.download_model
       tags:
