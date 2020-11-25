@@ -35,15 +35,6 @@ from verifier.labeling_function import make_lf, lf_to_hash
 from verifier.modeler import Modeler
 from verifier.translator import find_indices
 
-# MODE can be any of:
-#   youtube - spam vs notspam 
-#   amazon - positive vs negative sentiment 
-#   film - comedy vs drama (wikipedia movie plots)
-#   news - gun politics or electronics forum posts
-MODE = "Youtube"
-
-# USER_ID only determines the name of the directory where the model is saved
-USER_ID = "testing"
 
 # fetch concepts wrapper, modeler, and label types
 project = Project()
@@ -114,9 +105,6 @@ def select_dataset(config: dict):
     dataset_uuid = config.get('dataset_uuid')
     workThread = threading.Thread(target=lambda: project.prep_datasets(dataset_uuid))
     workThread.start()
-    if project.name:
-        global MODE
-        MODE = project.name
 
 def progress():
     """Get progress of the project launch (data preprocessing and model launching)
@@ -274,26 +262,6 @@ SHOW_EXPLANATION_TEXT = False
 tutorial_index = 0
 if SHOW_EXPLANATION_TEXT:
     tutorial_index = -1
-
-def next_text_demo():
-    pass
-    #TODO
-    # demo_examples = [
-    #     101, #subscribe
-    #     248, # wow
-    #     355, 
-    #     233,
-    #     215,
-    #     394,
-    #     479,
-    #     164
-    #     ]
-    # if (MODE == "Youtube") and (tutorial_index <= len(demo_examples)):
-    #     if tutorial_index==0:
-    #         update_stats({}, "begin")
-        
-    #     result = modeler.text_at(demo_examples[tutorial_index])
-    #     tutorial_index += 1
     
 
 def next_text(annotate_concepts=True, annotate_NER=True):
@@ -455,7 +423,7 @@ def get_lf_label_examples(lf_id):
 
 def zip_model(dirname=None):
     if dirname is None:
-        dirname = "models/" + MODE + '_ruler_model'
+        dirname = "models/" + project.name + '_ruler_model'
     try:
         os.mkdir(dirname)
     except FileExistsError:
@@ -474,38 +442,9 @@ def download_model():
     zip_model(dirname=dirname)
     return send_file('../' + dirname + '.zip', as_attachment=True)
 
+def download_data():
+    dirname = "datasets/"
 
-def upload_model(data: dict):
-    """Save model and stats to zip file and upload to shared folder (for user study)
-    """
-    update_stats({**stats, "data": "dev"}, "final_stats")
-    dirname = USER_ID + '/' + MODE
-    try:
-        os.mkdir(USER_ID)
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(dirname)
-    except FileExistsError:
-        pass
-    modeler = project.modeler
-    modeler.save(dirname)
-    interactionDB.save(dirname)
-    project.concepts.save(dirname)
-
-    global stat_history
-    stat_history["time_delta"] = stat_history["time"] - stat_history["time"].iloc[0]
-    stat_history["tool"] = "Ruler"
-    stat_history["task"] = MODE
-    stat_history["user"] = USER_ID
-    stat_history.to_csv(os.path.join(dirname, "statistics_history.csv"))
-
-    zipfile = USER_ID + '_' + MODE
-
-    shutil.make_archive(zipfile, 'zip', base_dir=dirname)
-
-    print("Files saved to directory " + dirname)
-    print('zipped to ' + zipfile)
 
 def load_model(dirname: str):
     project.concepts.load(dirname)
