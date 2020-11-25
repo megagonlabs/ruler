@@ -104,11 +104,7 @@ function VerticalLinearStepper(props) {
           />
         );
       case 3:
-        return (
-          <RouteLink to="/project" classes={classes}>
-            Continue to Task
-          </RouteLink>
-        );
+        return null;
       default:
         return "Unknown step";
     }
@@ -132,6 +128,12 @@ function VerticalLinearStepper(props) {
           >
             Continue
           </Button>
+        );
+      case 3:
+        return (
+          <RouteLink to="/project" classes={classes}>
+            Continue to Task
+          </RouteLink>
         );
       default:
         return (
