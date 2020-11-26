@@ -129,7 +129,7 @@ def select_model(config: dict):
 
 def create_new_model(model_name):
     project.set_name(model_name)
-    project.modeler = Modeler(cardinality=project.cardinality)
+    project.modeler = Modeler(cardinality=project.cardinality, name=model_name)
     project.save(os.path.join("models", model_name))
     return get_models()
 
@@ -438,13 +438,13 @@ def zip_model(dirname=None):
 def download_model():
     """Save model to zip file and send to user's browser
     """
-    dirname = "models/" + project.name
+    dirname = "models/" + project.modeler.name
     zip_model(dirname=dirname)
     return send_file('../' + dirname + '.zip', as_attachment=True)
 
-def download_data():
-    dirname = "datasets/"
-
+def save_project():
+    dirname = "models/" + project.modeler.name
+    project.save(dirname)
 
 def load_model(dirname: str):
     project.concepts.load(dirname)

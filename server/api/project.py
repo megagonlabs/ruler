@@ -11,7 +11,7 @@ from api.dataset import allowed_file
 from api.dataset import DATASETS_PATH
 from api.dataset import DataPreparer
 from api.dataset import Dataset
-from api.version_file import VersionFile
+from datetime import datetime
 from synthesizer.gll import ConceptWrapper
 from synthesizer.gll import DELIMITER
 from synthesizer.gll import Label
@@ -84,6 +84,8 @@ class Project:
         """
         path = os.path.join(DATASETS_PATH, dataset_path)
         assert os.path.exists(path), 'Path \'{}\' not found'.format(path)
+        self.dataset_path = path
+        
         if self.name is None:
             self.name = str(dataset_path)
         self.data_preparer = DataPreparer()
@@ -140,18 +142,18 @@ class Project:
 
     def save_datasets(self):
         for dset_name in ["train", "dev", "test", "valid"]:
-            if self.__hasattr__(dset_name):
-                dset = self.__get__(dset_name)
-                logging.info("[DATA] {} dataset save success")
+            if hasattr(self, dset_name):
+                dset = getattr(self, dset_name)
+                print("[DATA] {} dataset save success")
                 probabilistic_labels = self.modeler.predict(dset)
-
-                path = os.path.join(DATASETS_PATH, self.name)
                 # add datetime to file name (version control)
-                path = VersionFile(path)
+                now = datetime.now()
+                date_string = now.strftime("%Y-%m-%d_%H:%M:%S")
+                path = os.path.join(self.dataset_path, "labelled_" + self.modeler.name + "_" + date_string + ".csv")
                 dset.save(path=path, y=probabilistic_labels)
 
             else:
-                logging.info("[DATA] {} dataset save failed (dataset not found)".format(dset_name))
+                print("[DATA] {} dataset save failed (dataset not found)".format(dset_name))
 
 
     def load_model(self, path):

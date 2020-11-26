@@ -39,6 +39,7 @@ class apiTest(unittest.TestCase):
             "valid": Dataset(df_dev),
             "test": Dataset(df_dev),
             })
+        self.project.dataset_path = "datasets/sentiment_example"
 
         while not project.ready():
             time.sleep(1)
@@ -199,5 +200,6 @@ class apiTest(unittest.TestCase):
         # Make sure object is json serializable
         json.dumps(mod)
 
-    def test_load_model(self):
-        pass
+    def test_save_model(self):
+        self.project.modeler.add_lfs([self.test_lf])
+        self.project.save("models/test_model")

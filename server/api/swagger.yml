@@ -634,15 +634,13 @@ paths:
                       description: The annotations by this function over the text
 
   /save:
-    get:
-      operationId: endpoints.download_model
+    post:
+      operationId: endpoints.save_project
       tags:
         -  Project Management
-      summary: Save the interactions, labeling functions, and model to disk and send to browser
+      summary: Save the interactions, labeling functions, and model to disk
       responses:
         200:
           description: OK
-          schema:
-            type: file
   
               

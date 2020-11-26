@@ -8,6 +8,7 @@ from synthesizer.parser import nlp
 from config import DATASETS_PATH
 from config import DEFAULT_MAX_TRAINING_SIZE
 from config import MIN_LABELLED_SIZE
+from config import PROCESSED_FILE_NAME
 
 ALLOWED_EXTENSIONS = {'csv'}
 
@@ -46,9 +47,8 @@ class Dataset:
             y (matrix, optional): Model predictions. If passed, they will be saved with the data.
         """
         if y is not None:
-            for i in range(len(y)):
+            for i in range(y.shape[1]):
                 self.df["pred_{}".format(i)] = y[:,i]
-        print(self.df.head())
         self.df.to_csv(path)
 
     def apply_lfs(self, lfs: list):
