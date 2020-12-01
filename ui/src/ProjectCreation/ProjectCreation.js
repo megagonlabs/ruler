@@ -104,11 +104,7 @@ function VerticalLinearStepper(props) {
           />
         );
       case 3:
-        return (
-          <RouteLink to="/project" classes={classes}>
-            Continue to Task
-          </RouteLink>
-        );
+        return null;
       default:
         return "Unknown step";
     }
@@ -116,24 +112,7 @@ function VerticalLinearStepper(props) {
 
   function getStepButton(step) {
     switch (step) {
-      case 2:
-        function goToProject() {
-          props.submitLabels(props.labelClasses);
-          handleNext();
-          startLoadingBar();
-        }
-        return (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={goToProject}
-            className={classes.button}
-            disabled={props.selected_model === undefined}
-          >
-            Continue
-          </Button>
-        );
-      default:
+      case 0: // select dataset
         return (
           <Button
             variant="contained"
@@ -144,6 +123,42 @@ function VerticalLinearStepper(props) {
           >
             Next
           </Button>
+        );
+      case 1: // select model
+        return (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleNext}
+            className={classes.button}
+            disabled={props.selected_model === undefined}
+          >
+            Continue
+          </Button>
+        );
+      case 2: // submit labels
+        function goToProject() {
+          props.submitLabels(props.labelClasses);
+          handleNext();
+          startLoadingBar();
+        }
+        const numLabelClasses = Object.keys(props.labelClasses).length;
+        return (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={goToProject}
+            className={classes.button}
+            disabled={numLabelClasses == 0}
+          >
+            Continue
+          </Button>
+        );
+      default: // go to project
+        return (
+          <RouteLink to="/project" classes={classes}>
+            Continue to Task
+          </RouteLink>
         );
     }
   }

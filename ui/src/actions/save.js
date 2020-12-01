@@ -28,7 +28,8 @@ function saveError(error) {
 
 export function saveModel() { 
     return dispatch => {
-        window.open(`${api}/save`);
+        axios.post(`${api}/save`)
+        .then(response => {});
     }
 }
 
