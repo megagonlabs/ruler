@@ -1,5 +1,7 @@
 *.DS_Store
 */data/*
 venv/*
-*.egg
+*.egg*
 server/Sphinx*
+dist/*
+
