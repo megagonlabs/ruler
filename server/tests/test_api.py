@@ -12,6 +12,11 @@ class apiTest(unittest.TestCase):
         self.project = project
         self.labels = {"POS": 1, "NEG": 0}
 
+        self.config = {
+            "dataset_uuid": "sentiment_example",
+            "model_name": "sentiment_example_model"
+        }
+
         post_labels(self.labels)
 
         sample = [
@@ -186,8 +191,8 @@ class apiTest(unittest.TestCase):
         for l in [m, d]:
             for item in l:
                 self.assertTrue(len(item) > 0)
-        select_model(m[0])
-        select_dataset(d[0])
+        select_model({"model_name": m[0]})
+        select_dataset({"dataset_uuid": d[0]})
 
     def test_create_model(self):
         create_new_model("test_model")

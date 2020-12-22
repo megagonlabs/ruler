@@ -35,7 +35,7 @@ class Modeler:
         lf_db (LF_DB): A database of labeling functions.
     """
     
-    def __init__(self, lf_db=None, label_model=None, cardinality: int=2):
+    def __init__(self, lf_db=None, label_model=None, cardinality: int=2, name=None):
             """
             Args:
                 lf_db (LF_DB, optional): A database of labeling functions.
@@ -43,6 +43,7 @@ class Modeler:
                     you can pass your own LabelModel to iterate on or create a new one with Ruler.
                 cardinality (int, optional): Number of label classes 
             """
+            self.name = name
             if lf_db is None:
                 self.lf_db = LFDB({})
                 assert len(self.get_lfs())==0, self.get_lfs()
@@ -191,6 +192,7 @@ class Modeler:
         # save label_model
         self.label_model.save(os.path.join(path, 'label_model.pkl'))
 
+
     @staticmethod
     def load(path):
         """Load a previously saved modeler.
@@ -219,7 +221,7 @@ class Modeler:
         # load label_model
         label_model = LabelModel()
         label_model.load(os.path.join(path, 'label_model.pkl'))
-        return Modeler(lf_db=lf_db, label_model=label_model, cardinality=label_model.cardinality)
+        return Modeler(lf_db=lf_db, label_model=label_model, cardinality=label_model.cardinality, name=tail)
 
     def get_weights(self):
         """Get the weights assigned to each labeling function
@@ -452,7 +454,6 @@ class LFDB:
         """
         with open(path, "r") as file:
             db_json = json.load(file)
-            print(db_json)
             db = {
                 lf_id: LabelingFunction.read_json(lf_json) \
                     for lf_id, lf_json in db_json.items()

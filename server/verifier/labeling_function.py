@@ -111,7 +111,6 @@ class LabelingFunction(SnorkelLF):
         obj = {
             "name": self.name,
             "resources": self._resources, 
-            # TODO make sure all resources are json serializable
             "active": self.active,
             "stats": self.stats,
             "time_created": str(self.time_created)
