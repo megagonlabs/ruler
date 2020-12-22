@@ -66,7 +66,7 @@ class KerasLogReg:
         """
         # Set all random seeds
         snork_seed(123)
-        tf.random.set_seed(123)
+        tf.random.set_random_seed(123)
         np_seed(123)
         py_seed(123)
         self.cardinality = cardinality
