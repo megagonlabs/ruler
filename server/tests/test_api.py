@@ -198,7 +198,7 @@ class apiTest(unittest.TestCase):
         create_new_model("test_model")
         m = get_models()
         self.assertTrue("test_model" in m)
-        select_model("test_model")
+        select_model({"model_name": "test_model"})
 
     def test_zip_model(self):
         mod = zip_model()

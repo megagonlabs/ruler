@@ -3,6 +3,8 @@ import unittest
 
 from api.dataset import Dataset
 from api.project import Project
+from verifier.modeler import Modeler
+
 
 
 class projectTest(unittest.TestCase):
@@ -37,6 +39,16 @@ class projectTest(unittest.TestCase):
 
     def test_prep_datasets(self):
         self.project.prep_datasets('spam_example', test_split=False)
+
+    def test_save(self):
+
+        test_dir_name = "test_0"
+        self.project.prep_datasets('spam_example', test_split=False)
+        self.project.load_model("models/" + test_dir_name)
+
+        self.project.save_datasets("datasets/spam_example/labelled.csv")
+
+
 
     def test_readiness(self):
         # TODO: assert labels and cardinality match

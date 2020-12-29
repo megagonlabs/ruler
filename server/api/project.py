@@ -140,16 +140,20 @@ class Project:
         self.concepts.save(os.path.join(path, "concept_collection.json"))
         self.save_datasets()
 
-    def save_datasets(self):
+    def save_datasets(self, path=None):
         for dset_name in ["train", "dev", "test", "valid"]:
             if hasattr(self, dset_name):
                 dset = getattr(self, dset_name)
                 print("[DATA] {} dataset save success")
-                probabilistic_labels = self.modeler.predict(dset)
+                if self.modeler.has_lfs():
+                    probabilistic_labels = self.modeler.predict(dset)
+                else:
+                    probabilistic_labels = None
                 # add datetime to file name (version control)
                 now = datetime.now()
                 date_string = now.strftime("%Y-%m-%d_%H:%M:%S")
-                path = os.path.join(self.dataset_path, "labelled_" + self.modeler.name + "_" + date_string + ".csv")
+                if path is None:
+                    path = os.path.join(self.dataset_path, "labelled_" + self.modeler.name + "_" + date_string + ".csv")
                 dset.save(path=path, y=probabilistic_labels)
 
             else:
@@ -160,6 +164,9 @@ class Project:
         self.modeler = Modeler.load(path)
         self.concepts = ConceptWrapper.load(os.path.join(path, "concept_collection.json"))
         self.labels = Label.load(os.path.join(path, "labels.json"))
+
+        if hasattr(self, "train"):
+            self.modeler.fit(self.train)
 
     ## LOAD EXISTING/PRE-DEFINED TASK ##
     @staticmethod
