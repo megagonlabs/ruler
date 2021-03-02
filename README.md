@@ -2,13 +2,18 @@
  
 This repo contains the source code and the user evaluation data and analysis scripts for Ruler, a data programming by demonstration system for document labeling. 
 
-
 <h3 align="center">
  Ruler synthesizes labeling functions based on your span-level annotations, allowing you to quickly and easily generate large amounts of training data for text classification, without the need to program. <br/>
 <img width=800px src=media/ruler_teaser.gif>
 </h3>
 
 Check out our [demo video](https://drive.google.com/file/d/1iOQt81VDg9sCPcbrMWG8CR_8dOCfpKP5/view?usp=sharing) to see Ruler in action on a spam classification task, or [try it yourself](http://54.83.150.235:3000/) on a sentiment analysis task.
+
+
+<h3 align="center">
+ News: We have recently released <a href= https://github.com/megagonlabs/tagruler>TagRuler</a>, an extension  of Ruler that you can use to generate labelled data for span annotation tasks. Check it out! <br/>
+</h3>
+
 
 ## Table of Contents
 1. [What is Ruler?](#ruler)
