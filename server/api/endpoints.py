@@ -52,7 +52,7 @@ end_model = None
 def get_labels():
     """Get pre-defined labels for this project
     """
-    return project.labels.to_dict()
+    return project.get_labels()
 
 def post_labels(labels: dict):
     """Define labels of a project

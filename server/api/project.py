@@ -53,7 +53,7 @@ class Project:
             self.modeler = modeler
             self.cardinality = modeler.cardinality
         else:
-            self.modeler = Modeler(cardinality=cardinality)
+            self.modeler = Modeler(name, cardinality=cardinality)
             self.cardinality = cardinality
 
     ## STATUS CHECK ##
@@ -132,7 +132,8 @@ class Project:
             self.labels.add_label(lname, value)
 
     def get_labels(self):
-        return self.labels.to_dict()
+        labels = self.labels.to_dict()
+        return labels
 
     def save(self, path):
         self.modeler.save(path)
@@ -145,7 +146,10 @@ class Project:
             if hasattr(self, dset_name):
                 dset = getattr(self, dset_name)
                 print("[DATA] {} dataset save success")
-                probabilistic_labels = self.modeler.predict(dset)
+                if self.modeler.has_lfs():
+                    probabilistic_labels = self.modeler.predict(dset)
+                else:
+                    probabilistic_labels = None
                 # add datetime to file name (version control)
                 now = datetime.now()
                 date_string = now.strftime("%Y-%m-%d_%H:%M:%S")

@@ -79,7 +79,10 @@ function fetchClasses() {
             if(response.error) {
                 throw(response.error);
             }
-            const data = dataFromResponse(response.data["labels"]);
+            var data = dataFromResponse(response.data);
+            if (data.labels) {
+                data = data.labels;
+            }
             console.log(data);
             dispatch(getClassesSuccess(data));
         })

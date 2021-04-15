@@ -35,7 +35,7 @@ class Modeler:
         lf_db (LF_DB): A database of labeling functions.
     """
     
-    def __init__(self, lf_db=None, label_model=None, cardinality: int=2):
+    def __init__(self, name, lf_db=None, label_model=None, cardinality: int=2):
             """
             Args:
                 lf_db (LF_DB, optional): A database of labeling functions.
@@ -43,6 +43,7 @@ class Modeler:
                     you can pass your own LabelModel to iterate on or create a new one with Ruler.
                 cardinality (int, optional): Number of label classes 
             """
+            self.name = name
             if lf_db is None:
                 self.lf_db = LFDB({})
                 assert len(self.get_lfs())==0, self.get_lfs()
@@ -219,7 +220,7 @@ class Modeler:
         # load label_model
         label_model = LabelModel()
         label_model.load(os.path.join(path, 'label_model.pkl'))
-        return Modeler(lf_db=lf_db, label_model=label_model, cardinality=label_model.cardinality)
+        return Modeler(tail, lf_db=lf_db, label_model=label_model, cardinality=label_model.cardinality)
 
     def get_weights(self):
         """Get the weights assigned to each labeling function

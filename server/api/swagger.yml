@@ -244,8 +244,9 @@ paths:
           description: OK
           schema:
             type: object
-            additionalProperties:
-              type: integer
+            properties:
+              label:
+                type: object
     post:
       operationId: endpoints.post_labels
       tags:
@@ -257,6 +258,9 @@ paths:
           required: true
           schema:
             type: object
+            properties:
+              label:
+                type: object
       responses:
         200:
           description: OK
