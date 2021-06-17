@@ -153,7 +153,7 @@ class Project:
                     probabilistic_labels = None
                 # add datetime to file name (version control)
                 now = datetime.now()
-                date_string = now.strftime("%Y-%m-%d_%H:%M:%S")
+                date_string = now.strftime("%Y-%m-%d")
                 path = os.path.join(self.dataset_path, "labelled_" + self.modeler.name + "_" + date_string + ".csv")
                 dset.save(path=path, y=probabilistic_labels)
 
