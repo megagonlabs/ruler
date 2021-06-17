@@ -256,7 +256,8 @@ class DatasetSelect extends Component {
                 dialogTitle="Upload CSV file"
                 dropzoneText="Drag and drop a CSV file or click to upload"
                 onSave={this.handleDropFileSave.bind(this)}
-                acceptedFiles={['text/csv']}
+                //acceptedFiles={['text/csv']}
+                acceptedFiles={[".csv, text/csv, application/vnd.ms-excel, application/csv, text/x-csv, application/x-csv, text/comma-separated-values, text/x-comma-separated-values"]}
                 showPreviews={true}
                 useChipsForPreview={true}
                 maxFileSize={20000000}

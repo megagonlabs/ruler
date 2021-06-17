@@ -18,10 +18,11 @@ from synthesizer.gll import Label
 from tqdm import tqdm
 from verifier.modeler import Modeler
 from werkzeug.utils import secure_filename
+from config import MODELS_PATH, DATASETS_PATH
 
 tqdm.pandas(desc="model launch progress")
 
-DATASETS_PATH = 'datasets/'
+#DATASETS_PATH = 'datasets/'
 
 class Project:
     def __init__(self, 
@@ -152,7 +153,7 @@ class Project:
                     probabilistic_labels = None
                 # add datetime to file name (version control)
                 now = datetime.now()
-                date_string = now.strftime("%Y-%m-%d_%H:%M:%S")
+                date_string = now.strftime("%Y-%m-%d")
                 path = os.path.join(self.dataset_path, "labelled_" + self.modeler.name + "_" + date_string + ".csv")
                 dset.save(path=path, y=probabilistic_labels)
 
