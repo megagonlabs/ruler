@@ -18,10 +18,11 @@ from synthesizer.gll import Label
 from tqdm import tqdm
 from verifier.modeler import Modeler
 from werkzeug.utils import secure_filename
+from config import MODELS_PATH, DATASETS_PATH
 
 tqdm.pandas(desc="model launch progress")
 
-DATASETS_PATH = 'datasets/'
+#DATASETS_PATH = 'datasets/'
 
 class Project:
     def __init__(self, 

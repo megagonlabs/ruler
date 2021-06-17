@@ -34,6 +34,7 @@ from verifier.keraslogreg import KerasLogReg
 from verifier.labeling_function import make_lf, lf_to_hash
 from verifier.modeler import Modeler
 from verifier.translator import find_indices
+from config import MODELS_PATH, DATASETS_PATH
 
 
 # fetch concepts wrapper, modeler, and label types
@@ -80,7 +81,8 @@ def listdir(dirname: str):
 
 def get_datasets():
     """List available datasets"""
-    return listdir('datasets')
+    #return listdir('datasets')
+    return listdir(DATASETS_PATH)
 
 def get_dataset(dataset_uuid: str):
     """List files in a given dataset"""
@@ -120,17 +122,20 @@ def progress():
 ########################################
 def get_models():
     """List available models"""
-    return listdir('models')
+    #return listdir('models')
+    return listdir(MODELS_PATH)
 
 def select_model(config: dict):
     model_name = config.get("model_name")
-    model_path = os.path.join("models", model_name)
+    #model_path = os.path.join("models", model_name)
+    model_path = os.path.join(MODELS_PATH, model_name)
     project.load_model(model_path)
 
 def create_new_model(model_name):
     project.set_name(model_name)
     project.modeler = Modeler(cardinality=project.cardinality, name=model_name)
-    project.save(os.path.join("models", model_name))
+    #project.save(os.path.join("models", model_name))
+    project.save(os.path.join(MODELS_PATH, model_name))
     return get_models()
 
 ########################################
@@ -443,7 +448,8 @@ def download_model():
     return send_file('../' + dirname + '.zip', as_attachment=True)
 
 def save_project():
-    dirname = "models/" + project.modeler.name
+    #dirname = "models/" + project.modeler.name
+    dirname = os.path.join(MODELS_PATH, project.modeler.name)
     project.save(dirname)
 
 def load_model(dirname: str):
